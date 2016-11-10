@@ -30,6 +30,7 @@ public abstract class AppTemplate extends Application {
     private AppWorkspaceComponent workspaceComponent; // to manage the app's GUI workspace
     private AppGUI                gui;
 
+
     public String getFileControllerClass() {
         return "AppFileController";
     }
@@ -63,8 +64,8 @@ public abstract class AppTemplate extends Application {
             if (loadProperties(APP_PROPERTIES_XML) && loadProperties(WORKSPACE_PROPERTIES_XML)) {
                 AppComponentsBuilder builder = makeAppBuilderHook();
 
-                fileComponent = builder.buildFileComponent();
-                dataComponent = builder.buildDataComponent();
+                //fileComponent = builder.buildFileComponent();
+                //dataComponent = builder.buildDataComponent();
                 gui = (propertyManager.hasProperty(APP_WINDOW_WIDTH) && propertyManager.hasProperty(APP_WINDOW_HEIGHT))
                         ? new AppGUI(primaryStage, propertyManager.getPropertyValue(APP_TITLE.toString()), this,
                         Integer.parseInt(propertyManager.getPropertyValue(APP_WINDOW_WIDTH)),
@@ -72,10 +73,9 @@ public abstract class AppTemplate extends Application {
                         : new AppGUI(primaryStage, propertyManager.getPropertyValue(APP_TITLE.toString()), this);
                 workspaceComponent = builder.buildWorkspaceComponent();
                 initStylesheet();
-                gui.initStyle();
-                workspaceComponent.initStyle();
             }
         } catch (Exception e) {
+            e.printStackTrace();
             AppMessageDialogSingleton dialog = AppMessageDialogSingleton.getSingleton();
             dialog.show(propertyManager.getPropertyValue(PROPERTIES_LOAD_ERROR_TITLE.toString()),
                     propertyManager.getPropertyValue(PROPERTIES_LOAD_ERROR_MESSAGE.toString()));

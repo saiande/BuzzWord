@@ -10,9 +10,9 @@ package components;
  * @version 1.0
  */
 public interface AppComponentsBuilder {
-    AppDataComponent buildDataComponent() throws Exception;
+    //AppDataComponent buildDataComponent() throws Exception;
 
-    AppFileComponent buildFileComponent() throws Exception;
+    //AppFileComponent buildFileComponent() throws Exception;
 
     AppWorkspaceComponent buildWorkspaceComponent() throws Exception;
 }
