@@ -18,6 +18,7 @@ public class BuzzWordController implements FileController {
     public AppGUI gui;
     public GameData gamedata;
     public HomeScreen home;
+    String modeTitle;
     public BuzzWordController(AppTemplate apptemplate)
     {
         this.app = apptemplate;
@@ -51,9 +52,14 @@ public class BuzzWordController implements FileController {
 
     }
 
+    public String getModeTitle() {
+        return modeTitle;
+    }
+
     @Override
     public void handleSelectModeRequest() throws IOException {
-
+        modeTitle = " ";
+        modeTitle = app.getGUI().getHome().getSelectMode().getValue().toString();
     }
 
     @Override

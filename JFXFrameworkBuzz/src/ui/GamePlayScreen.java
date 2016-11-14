@@ -56,6 +56,8 @@ public class GamePlayScreen extends BorderPane{
     protected VBox mainTopVBox;
     protected Label levelLabel;
     protected  VBox bottomBox;
+    protected HBox total;
+    protected Label totalLabel;
     protected GridPane grid;
     protected Circle CircleOne;
     protected Circle CircleTwo;
@@ -68,7 +70,6 @@ public class GamePlayScreen extends BorderPane{
     protected Circle CircleNine;
     protected Circle CircleTenth;
     protected Circle CircleEleven;
-    protected Circle CircleTen;
     protected Circle CircleTwelve;
     protected Circle CircleThirt;
     protected Circle CircleFourt;
@@ -103,16 +104,14 @@ public class GamePlayScreen extends BorderPane{
         homeButton.setText("Home");
         xButton = new Button();
         xButton.setText("x");
+        xButton.setTooltip(new Tooltip("Close"));
         xButton.setTranslateX(760);
         xButton.setTranslateY(10);
         title = new Label();
-//        title.setText("!! BUZZWORD !!");
-//        title.setScaleX(2);
-//        title.setScaleY(2);
         modeTitle = new Label();
         modeTitle.setScaleX(2);
         modeTitle.setScaleY(2);
-        modeTitle.setText("Dictionary Words");
+        modeTitle.setText("modeTitle");
         list = new VBox(50);
         list.setTranslateY(-30);
         list.setStyle("-fx-background-color: mediumpurple;");
@@ -132,18 +131,25 @@ public class GamePlayScreen extends BorderPane{
         alreadyGuessedWords = new VBox();
         alreadyGuessedWords.setPrefSize(150, 250);
         alreadyGuessedWords.setStyle("-fx-background-color: gray;");
+        totalLabel = new Label();
+        totalLabel.setText("Total   ");
+        total = new HBox();
+        total.setStyle("-fx-background-color: dimgray;");
+        total.getChildren().addAll(totalLabel);
+        alreadyGuessedWords.getChildren().addAll(total);
+        total.setTranslateY(225);
         pointsLabel = new Label();
-        pointsLabel.setText("Points: ");
+        pointsLabel.setText("Target: ");
         pointsLabel.setScaleX(1.5);
         pointsLabel.setScaleY(1.5);
         pointsLabel.setTranslateY(40);
         pointsLabel.setTranslateX(40);
         pointsNumber = new Label();
-        pointsNumber.setText("10");
+        pointsNumber.setText("75 Points");
         pointsNumber.setTranslateX(40);
         pointsNumber.setTranslateY(40);
-        pointsNumber.setScaleX(2);
-        pointsNumber.setScaleY(2);
+        pointsNumber.setScaleX(1.5);
+        pointsNumber.setScaleY(1.5);
         timeLabel = new Label();
         timeLabel.setText("Time Remaining: ");
         timeBox = new HBox(10);
@@ -246,6 +252,14 @@ public class GamePlayScreen extends BorderPane{
         homeButton.setOnAction(e -> {
             try {
                 fileController.handleHomeRequest();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+                System.exit(1);
+            }
+        });
+        playPauseButton.setOnAction(e -> {
+            try {
+                fileController.handlePlayPauseRequest();
             } catch (IOException e1) {
                 e1.printStackTrace();
                 System.exit(1);

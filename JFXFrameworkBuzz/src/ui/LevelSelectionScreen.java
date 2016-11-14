@@ -1,11 +1,13 @@
 package ui;
 
 import apptemplate.AppTemplate;
+import controller.BuzzWordController;
 import controller.FileController;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -22,7 +24,9 @@ import java.lang.reflect.Method;
  * Created by sai on 11/7/16.
  */
 public class LevelSelectionScreen extends BorderPane {
+
     protected FileController fileController;
+
     protected Button profileButton;
     protected Button homeButton;
     protected Button xButton;
@@ -52,6 +56,7 @@ public class LevelSelectionScreen extends BorderPane {
 
 
     public void initialize() {
+
         this.setPrefSize(800, 650);
         this.setStyle("-fx-background-color: lightseagreen;");
 
@@ -61,10 +66,11 @@ public class LevelSelectionScreen extends BorderPane {
         homeButton.setText("Home");
         xButton = new Button();
         xButton.setText("x");
+        xButton.setTooltip(new Tooltip("Close"));
         xButton.setTranslateX(760);
         xButton.setTranslateY(10);
         title = new Label();
-        title.setText("!! BUZZWORD !!");
+        title.setText("modeTitle");
         title.setScaleX(2);
         title.setScaleY(2);
         list = new VBox(50);

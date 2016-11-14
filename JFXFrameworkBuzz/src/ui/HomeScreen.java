@@ -44,6 +44,11 @@ public class HomeScreen extends BorderPane {
     protected Button loginButton;
     protected Button profileButton;
     protected Button xButton;
+
+    public ComboBox getSelectMode() {
+        return selectMode;
+    }
+
     protected ComboBox selectMode;
     protected Button startPlayingButton;
     protected VBox list;
@@ -52,6 +57,7 @@ public class HomeScreen extends BorderPane {
     protected HBox closeHBox;
     protected HBox titleHBox;
     protected Label title;
+    public String modeTitle;
     protected static Pane clearPane;
     public Pane getClearPane() {
         return clearPane;
@@ -72,6 +78,7 @@ public class HomeScreen extends BorderPane {
         loginButton.setText("Login");
         xButton = new Button();
         xButton.setText("x");
+        xButton.setTooltip(new Tooltip("Close"));
         xButton.setTranslateX(760);
         xButton.setTranslateY(10);
         title = new Label();
@@ -177,6 +184,9 @@ public class HomeScreen extends BorderPane {
         username.getChildren().addAll(nameLabel, enterUsername);
         password.getChildren().addAll(passwordLabel, enterPassword);
         box.getChildren().addAll(username, password, buttonBox);
+        username.setPadding(new Insets(10,10,10,10));
+        password.setPadding(new Insets(10, 10, 10, 10));
+        buttonBox.setPadding(new Insets(10,10,10,10));
         box.setPadding(new Insets(50,50,50,50));
         clearPane.getChildren().addAll(box);
         box.setTranslateX(300);
@@ -206,6 +216,10 @@ public class HomeScreen extends BorderPane {
 
     }
 
+    public String getModeTitle() {
+        return modeTitle;
+    }
+
     public void afterLoginProfileHandlers(AppTemplate app) throws InstantiationException {
         try {
             Method getFileControllerClassMethod = app.getClass().getMethod("getFileControllerClass");
@@ -227,11 +241,11 @@ public class HomeScreen extends BorderPane {
         selectMode = new ComboBox(options);
         selectMode.setPromptText("Select Mode");
         selectMode.setTranslateX(-30);
-        //selectMode.setSelectedIndex(5);
         startPlayingButton = new Button();
         startPlayingButton.setText("Start Playing");
         secondList.getChildren().addAll(profileButton, selectMode, startPlayingButton);
         this.setLeft(secondList);
+
         profileButton.setOnAction(e -> {
             try {
                 fileController.handleProfileRequest();
@@ -241,13 +255,15 @@ public class HomeScreen extends BorderPane {
             }
         });
         selectMode.setOnAction(e -> {
-            try {
-                fileController.handleSelectModeRequest();
-            } catch (IOException e1) {
-                e1.printStackTrace();
-                System.exit(1);
-            }
-        });
+            modeTitle = selectMode.getValue().toString();
+                });
+//            try {
+//                fileController.handleSelectModeRequest();
+//            } catch (IOException e1) {
+//                e1.printStackTrace();
+//                System.exit(1);
+//            }
+//        });
         startPlayingButton.setOnAction(e -> {
             try {
                 fileController.handleStartPlayingRequest();
