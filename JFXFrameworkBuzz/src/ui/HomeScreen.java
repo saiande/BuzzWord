@@ -2,17 +2,22 @@ package ui;
 
 import apptemplate.AppTemplate;
 import controller.FileController;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.*;
 import javafx.geometry.Insets;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import propertymanager.PropertyManager;
 import sun.font.TextLabel;
 
+import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -39,20 +44,19 @@ public class HomeScreen extends BorderPane {
     protected Button loginButton;
     protected Button profileButton;
     protected Button xButton;
-    protected Button selectMode;
+    protected ComboBox selectMode;
     protected Button startPlayingButton;
     protected VBox list;
+    protected VBox secondList;
     protected VBox topVBox;
     protected HBox closeHBox;
     protected HBox titleHBox;
     protected Label title;
-
+    protected static Pane clearPane;
     public Pane getClearPane() {
         return clearPane;
     }
 
-    protected static Pane clearPane;
-    protected String username;
 
 
     public HomeScreen() {
@@ -60,28 +64,23 @@ public class HomeScreen extends BorderPane {
     }
     public void initialize() {
         this.setPrefSize(800, 650);
-        this.setStyle("-fx-background-color: pink;");
+        this.setStyle("-fx-background-color: lightseagreen;");
+
         createProfileButton = new Button();
         createProfileButton.setText("Create Profile");
         loginButton = new Button();
         loginButton.setText("Login");
-        profileButton = new Button();
-        profileButton.setText("Username");
         xButton = new Button();
         xButton.setText("x");
         xButton.setTranslateX(760);
         xButton.setTranslateY(10);
-        selectMode = new Button();
-        selectMode.setText("Select Mode");
-        startPlayingButton = new Button();
-        startPlayingButton.setText("Start Playing");
         title = new Label();
         title.setText("!! BUZZWORD !!");
         title.setScaleX(2);
         title.setScaleY(2);
         list = new VBox(50);
         list.setTranslateY(-30);
-        list.setStyle("-fx-background-color: purple;");
+        list.setStyle("-fx-background-color: mediumpurple;");
         list.setPadding(new Insets(200, 50, 50, 50));
         list.getChildren().addAll(createProfileButton, loginButton);
         closeHBox = new HBox(200);
@@ -102,8 +101,9 @@ public class HomeScreen extends BorderPane {
         this.setLeft(list);
         clearPane = new Pane();
         clearPane.setPrefSize(800, 650);
-        clearPane.setOpacity(0);
+        clearPane.setStyle("-fx-background-color: rgba(0, 100, 100, 0.2);");
     }
+
 
     public void initializeHomeHandlers(AppTemplate app) throws InstantiationException {
         try {
@@ -154,10 +154,55 @@ public class HomeScreen extends BorderPane {
         }
 
         clearPane.toFront();
-        PropertyManager propertyManager = PropertyManager.getManager();
-        LoginSingleton dialog = LoginSingleton.getSingleton();
-        dialog.show(propertyManager.getPropertyValue("Login"),
-                propertyManager.getPropertyValue(" "));
+//        PropertyManager propertyManager = PropertyManager.getManager();
+//        LoginSingleton dialog = LoginSingleton.getSingleton();
+//        dialog.show(propertyManager.getPropertyValue("Login"),
+//                propertyManager.getPropertyValue("Username "));
+        HBox    username = new HBox();
+        HBox password = new HBox();
+        HBox buttonBox = new HBox();
+        VBox   box = new VBox();
+        box.setPrefSize(400, 150);
+        Label  nameLabel = new Label();
+        nameLabel.setText("Username: ");
+        Label  passwordLabel = new Label();
+        passwordLabel.setText("Password: ");
+        TextField enterUsername = new TextField();
+        TextField enterPassword = new TextField();
+        Button enterButton = new Button();
+        enterButton.setText("Enter");
+        Button cancelButton = new Button();
+        cancelButton.setText("Cancel");
+        buttonBox.getChildren().addAll(enterButton, cancelButton);
+        username.getChildren().addAll(nameLabel, enterUsername);
+        password.getChildren().addAll(passwordLabel, enterPassword);
+        box.getChildren().addAll(username, password, buttonBox);
+        box.setPadding(new Insets(50,50,50,50));
+        clearPane.getChildren().addAll(box);
+        box.setTranslateX(300);
+        box.setTranslateY(300);
+        box.setStyle("-fx-background-color: mediumpurple;");
+
+        enterButton.setOnAction(e -> {
+            try {
+                box.setVisible(false);
+                clearPane.toBack();
+                fileController.handleEnterRequest();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+                System.exit(1);
+            }
+        });
+        cancelButton.setOnAction(e -> {
+            try {
+                box.setVisible(false);
+                clearPane.toBack();
+                fileController.handleCancelRequest();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+                System.exit(1);
+            }
+        });
 
     }
 
@@ -172,10 +217,21 @@ public class HomeScreen extends BorderPane {
             e.printStackTrace();
             System.exit(1);
         }
-        createProfileButton.setVisible(false);
-        loginButton.setVisible(false);
-        profileButton.setText(username);
-        list.getChildren().addAll(profileButton, selectMode, startPlayingButton);
+        secondList = new VBox(50);
+        secondList.setTranslateY(-30);
+        secondList.setStyle("-fx-background-color: mediumpurple;");
+        secondList.setPadding(new Insets(200, 0, 50, 50));
+        profileButton = new Button();
+        profileButton.setText("Username");
+        ObservableList<String> options = FXCollections.observableArrayList("Dictionary Words", "Animals", "Places", "Science", "Famous People");
+        selectMode = new ComboBox(options);
+        selectMode.setPromptText("Select Mode");
+        selectMode.setTranslateX(-30);
+        //selectMode.setSelectedIndex(5);
+        startPlayingButton = new Button();
+        startPlayingButton.setText("Start Playing");
+        secondList.getChildren().addAll(profileButton, selectMode, startPlayingButton);
+        this.setLeft(secondList);
         profileButton.setOnAction(e -> {
             try {
                 fileController.handleProfileRequest();
@@ -208,27 +264,5 @@ public class HomeScreen extends BorderPane {
                 System.exit(1);
             }
         });
-    }
-
-    public Button initializeChildButton(String icon, String tooltip, boolean disabled) throws IOException {
-        PropertyManager propertyManager = PropertyManager.getManager();
-
-        URL imgDirURL = AppTemplate.class.getClassLoader().getResource(APP_IMAGEDIR_PATH.getParameter());
-        if (imgDirURL == null)
-            throw new FileNotFoundException("Image resources folder does not exist.");
-
-        Button button = new Button();
-        try (InputStream imgInputStream = Files.newInputStream(Paths.get(imgDirURL.toURI()).resolve(propertyManager.getPropertyValue(icon)))) {
-            Image buttonImage = new Image(imgInputStream);
-            button.setDisable(disabled);
-            button.setGraphic(new ImageView(buttonImage));
-            Tooltip buttonTooltip = new Tooltip(propertyManager.getPropertyValue(tooltip));
-            button.setTooltip(buttonTooltip);
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-
-        return button;
     }
 }

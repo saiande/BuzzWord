@@ -43,7 +43,7 @@ public class LoginSingleton extends Stage {
      * Note that the constructor is private since it follows
      * the singleton design pattern.
      */
-    private LoginSingleton() {
+    public LoginSingleton() {
         init(primaryStage);
     }
 

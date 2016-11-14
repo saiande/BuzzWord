@@ -29,12 +29,14 @@
         <property name="LOAD_ICON" value="Load.png"/>
         <property name="SAVE_ICON" value="Save.png"/>
         <property name="EXIT_ICON" value="Exit.png"/>
+        <property name="PLAY_PAUSE_ICON" value="PlayPause.png"/>
 
         <!-- TOOLTIPS FOR BUTTONS -->
         <property name="NEW_TOOLTIP" value="Start a new game"/>
         <property name="LOAD_TOOLTIP" value="Load a saved game"/>
         <property name="SAVE_TOOLTIP" value="Save game"/>
         <property name="EXIT_TOOLTIP" value="Exit application"/>
+        <property name="PLAY_PAUSE_TOOLTIP" value="Play/ Pause"/>
 
         <!-- ERROR MESSAGES -->
         <property name="CLOSE_BUTTON_TEXT" value="Close"/>

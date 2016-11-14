@@ -40,4 +40,9 @@ public interface FileController {
     void handleSevenRequest() throws IOException;
 
     void handleEightRequest() throws IOException;
+
+    void handleEnterRequest() throws IOException;
+
+    void handleCancelRequest() throws IOException;
+
 }

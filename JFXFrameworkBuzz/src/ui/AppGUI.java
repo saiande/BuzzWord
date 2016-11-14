@@ -43,6 +43,15 @@ public class AppGUI {
     protected Scene primaryScene;     // the scene graph
     protected StackPane appPane;
     protected HomeScreen home;
+
+    public LevelSelectionScreen getLevel() {
+        return level;
+    }
+
+    public void setLevel(LevelSelectionScreen level) {
+        this.level = level;
+    }
+
     protected LevelSelectionScreen level;
     protected GamePlayScreen gameplay;
     public    String applicationTitle; // the application title
@@ -124,16 +133,23 @@ public class AppGUI {
         // SET THE WINDOW TITLE
         applicationTitle = "!! BUZZWORD !!";
         primaryStage.setTitle(applicationTitle);
-        // add the toolbar to the constructed workspace
+        //add the toolbar to the constructed workspace
+        //level = new LevelSelectionScreen();
+        //gameplay = new GamePlayScreen();
         clearPane = home.getClearPane();
         appPane = new StackPane();
         appPane.getChildren().addAll(clearPane, home);
+        home.toFront();
         primaryScene = appWindowWidth < 1 || appWindowHeight < 1 ? new Scene(appPane)
                 : new Scene(appPane,
                 appWindowWidth,
                 appWindowHeight);
         primaryStage.setScene(primaryScene);
         primaryStage.show();
+    }
+    public HomeScreen getHome()
+    {
+        return home;
     }
 
 }
