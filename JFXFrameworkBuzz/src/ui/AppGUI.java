@@ -48,6 +48,10 @@ public class AppGUI {
         return level;
     }
 
+    public GamePlayScreen getGameplay(){
+        return gameplay;
+    }
+
     public void setLevel(LevelSelectionScreen level) {
         this.level = level;
     }
@@ -73,11 +77,23 @@ public class AppGUI {
     }
 
     public AppGUI(Stage primaryStage, String applicationTitle, AppTemplate appTemplate, int appWindowWidth, int appWindowHeight) throws IOException, InstantiationException {
+        try {
+            Method getFileControllerClassMethod = appTemplate.getClass().getMethod("getFileControllerClass");
+            String fileControllerClassName = (String) getFileControllerClassMethod.invoke(appTemplate);
+            Class<?> klass = Class.forName("controller." + fileControllerClassName);
+            Constructor<?> constructor = klass.getConstructor(AppTemplate.class);
+            fileController = (FileController) constructor.newInstance(appTemplate);
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.exit(1);
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        }
         this.appWindowWidth = appWindowWidth;
         this.appWindowHeight = appWindowHeight;
         this.primaryStage = primaryStage;
         this.applicationTitle = applicationTitle;
-        this.home = new HomeScreen();
+        this.home = new HomeScreen(fileController);
         initializeScreen(Screen.HOME);
         home.initializeHomeHandlers(appTemplate);
         initializeWindow();                     // start the app window (without the application-specific workspace)
@@ -129,6 +145,7 @@ public class AppGUI {
 
     private void initializeWindow() throws IOException {
         PropertyManager propertyManager = PropertyManager.getManager();
+
 
         // SET THE WINDOW TITLE
         applicationTitle = "!! BUZZWORD !!";

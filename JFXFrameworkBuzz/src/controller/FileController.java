@@ -45,4 +45,8 @@ public interface FileController {
 
     void handleCancelRequest() throws IOException;
 
+    String getModeTitle();
+
+    int getLevel();
+
 }

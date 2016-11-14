@@ -57,15 +57,15 @@ public class HomeScreen extends BorderPane {
     protected HBox closeHBox;
     protected HBox titleHBox;
     protected Label title;
-    public String modeTitle;
+    protected String modeTitle;
     protected static Pane clearPane;
     public Pane getClearPane() {
         return clearPane;
     }
 
 
-
-    public HomeScreen() {
+    public HomeScreen(FileController fileController) {
+        this.fileController = fileController;
 
     }
     public void initialize() {
@@ -113,16 +113,6 @@ public class HomeScreen extends BorderPane {
 
 
     public void initializeHomeHandlers(AppTemplate app) throws InstantiationException {
-        try {
-            Method getFileControllerClassMethod = app.getClass().getMethod("getFileControllerClass");
-            String fileControllerClassName = (String) getFileControllerClassMethod.invoke(app);
-            Class<?> klass = Class.forName("controller." + fileControllerClassName);
-            Constructor<?> constructor = klass.getConstructor(AppTemplate.class);
-            fileController = (FileController) constructor.newInstance(app);
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | ClassNotFoundException e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
         createProfileButton.setOnAction(e -> {
             try {
                 fileController.handleCreateProfileRequest();
@@ -149,16 +139,7 @@ public class HomeScreen extends BorderPane {
         });
     }
     public void loginHandlers(AppTemplate app) throws InstantiationException {
-        try {
-            Method getFileControllerClassMethod = app.getClass().getMethod("getFileControllerClass");
-            String fileControllerClassName = (String) getFileControllerClassMethod.invoke(app);
-            Class<?> klass = Class.forName("controller." + fileControllerClassName);
-            Constructor<?> constructor = klass.getConstructor(AppTemplate.class);
-            fileController = (FileController) constructor.newInstance(app);
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | ClassNotFoundException e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
+
 
         clearPane.toFront();
 //        PropertyManager propertyManager = PropertyManager.getManager();
@@ -216,21 +197,9 @@ public class HomeScreen extends BorderPane {
 
     }
 
-    public String getModeTitle() {
-        return modeTitle;
-    }
 
     public void afterLoginProfileHandlers(AppTemplate app) throws InstantiationException {
-        try {
-            Method getFileControllerClassMethod = app.getClass().getMethod("getFileControllerClass");
-            String fileControllerClassName = (String) getFileControllerClassMethod.invoke(app);
-            Class<?> klass = Class.forName("controller." + fileControllerClassName);
-            Constructor<?> constructor = klass.getConstructor(AppTemplate.class);
-            fileController = (FileController) constructor.newInstance(app);
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | ClassNotFoundException e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
+
         secondList = new VBox(50);
         secondList.setTranslateY(-30);
         secondList.setStyle("-fx-background-color: mediumpurple;");
@@ -256,14 +225,13 @@ public class HomeScreen extends BorderPane {
         });
         selectMode.setOnAction(e -> {
             modeTitle = selectMode.getValue().toString();
-                });
-//            try {
-//                fileController.handleSelectModeRequest();
-//            } catch (IOException e1) {
-//                e1.printStackTrace();
-//                System.exit(1);
-//            }
-//        });
+            try {
+                fileController.handleSelectModeRequest();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+                System.exit(1);
+            }
+        });
         startPlayingButton.setOnAction(e -> {
             try {
                 fileController.handleStartPlayingRequest();
@@ -280,5 +248,8 @@ public class HomeScreen extends BorderPane {
                 System.exit(1);
             }
         });
+    }
+    public String getModeTitle() {
+        return modeTitle;
     }
 }

@@ -18,7 +18,8 @@ public class BuzzWordController implements FileController {
     public AppGUI gui;
     public GameData gamedata;
     public HomeScreen home;
-    String modeTitle;
+    public String modeTitle;
+    public int level;
     public BuzzWordController(AppTemplate apptemplate)
     {
         this.app = apptemplate;
@@ -52,21 +53,18 @@ public class BuzzWordController implements FileController {
 
     }
 
-    public String getModeTitle() {
-        return modeTitle;
-    }
-
     @Override
     public void handleSelectModeRequest() throws IOException {
-        modeTitle = " ";
-        modeTitle = app.getGUI().getHome().getSelectMode().getValue().toString();
+
+        modeTitle = new String();
+        modeTitle = app.getGUI().getHome().getModeTitle();
     }
 
     @Override
     public void handleStartPlayingRequest() throws IOException {
         try{
         if(app.getGUI().getLevel() == null) {
-            LevelSelectionScreen level = new LevelSelectionScreen();
+            LevelSelectionScreen level = new LevelSelectionScreen(this);
             level.initialize();
             level.initializeLevelHandlers(app);
             app.getGUI().setLevel(level);
@@ -104,7 +102,8 @@ public class BuzzWordController implements FileController {
 
     @Override
     public void handleOneRequest() throws IOException {
-        GamePlayScreen gameplay = new GamePlayScreen();
+        GamePlayScreen gameplay = new GamePlayScreen(this);
+        level = 1;
         gameplay.initialize();
         try {
             gameplay.initializeGamePlayHandlers(app);
@@ -113,11 +112,13 @@ public class BuzzWordController implements FileController {
         }
         app.getGUI().getAppPane().getChildren().add(gameplay);
         gameplay.toFront();
+
     }
 
     @Override
     public void handleTwoRequest() throws IOException {
-        GamePlayScreen gameplay = new GamePlayScreen();
+        GamePlayScreen gameplay = new GamePlayScreen(this);
+        level = 2;
         gameplay.initialize();
         try {
             gameplay.initializeGamePlayHandlers(app);
@@ -126,11 +127,13 @@ public class BuzzWordController implements FileController {
         }
         app.getGUI().getAppPane().getChildren().add(gameplay);
         gameplay.toFront();
+
     }
 
     @Override
     public void handleThreeRequest() throws IOException {
-        GamePlayScreen gameplay = new GamePlayScreen();
+        GamePlayScreen gameplay = new GamePlayScreen(this);
+        level = 3;
         gameplay.initialize();
         try {
             gameplay.initializeGamePlayHandlers(app);
@@ -139,11 +142,14 @@ public class BuzzWordController implements FileController {
         }
         app.getGUI().getAppPane().getChildren().add(gameplay);
         gameplay.toFront();
+
+
     }
 
     @Override
     public void handleFourRequest() throws IOException {
-        GamePlayScreen gameplay = new GamePlayScreen();
+        GamePlayScreen gameplay = new GamePlayScreen(this);
+        level = 4;
         gameplay.initialize();
         try {
             gameplay.initializeGamePlayHandlers(app);
@@ -152,11 +158,14 @@ public class BuzzWordController implements FileController {
         }
         app.getGUI().getAppPane().getChildren().add(gameplay);
         gameplay.toFront();
+
+
     }
 
     @Override
     public void handleFiveRequest() throws IOException {
-        GamePlayScreen gameplay = new GamePlayScreen();
+        GamePlayScreen gameplay = new GamePlayScreen(this);
+        level = 5;
         gameplay.initialize();
         try {
             gameplay.initializeGamePlayHandlers(app);
@@ -165,11 +174,14 @@ public class BuzzWordController implements FileController {
         }
         app.getGUI().getAppPane().getChildren().add(gameplay);
         gameplay.toFront();
+
+
     }
 
     @Override
     public void handleSixRequest() throws IOException {
-        GamePlayScreen gameplay = new GamePlayScreen();
+        GamePlayScreen gameplay = new GamePlayScreen(this);
+        level = 6;
         gameplay.initialize();
         try {
             gameplay.initializeGamePlayHandlers(app);
@@ -178,11 +190,14 @@ public class BuzzWordController implements FileController {
         }
         app.getGUI().getAppPane().getChildren().add(gameplay);
         gameplay.toFront();
+
+
     }
 
     @Override
     public void handleSevenRequest() throws IOException {
-        GamePlayScreen gameplay = new GamePlayScreen();
+        GamePlayScreen gameplay = new GamePlayScreen(this);
+        level = 7;
         gameplay.initialize();
         try {
             gameplay.initializeGamePlayHandlers(app);
@@ -191,11 +206,14 @@ public class BuzzWordController implements FileController {
         }
         app.getGUI().getAppPane().getChildren().add(gameplay);
         gameplay.toFront();
+
+
     }
 
     @Override
     public void handleEightRequest() throws IOException {
-        GamePlayScreen gameplay = new GamePlayScreen();
+        GamePlayScreen gameplay = new GamePlayScreen(this);
+        level = 8;
         gameplay.initialize();
         try {
             gameplay.initializeGamePlayHandlers(app);
@@ -204,6 +222,8 @@ public class BuzzWordController implements FileController {
         }
         app.getGUI().getAppPane().getChildren().add(gameplay);
         gameplay.toFront();
+
+
     }
 
     @Override
@@ -220,6 +240,16 @@ public class BuzzWordController implements FileController {
     @Override
     public void handleCancelRequest() throws IOException {
 
+    }
+
+    @Override
+    public String getModeTitle() {
+        return modeTitle;
+    }
+
+    @Override
+    public int getLevel() {
+        return level;
     }
 
 }

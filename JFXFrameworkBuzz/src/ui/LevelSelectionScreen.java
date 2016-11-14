@@ -46,12 +46,16 @@ public class LevelSelectionScreen extends BorderPane {
     protected HBox secondLine;
     protected VBox levels;
     protected Label title;
+    protected Label modeTitle;
+    protected HBox modeTitleHBox;
+    protected int level;
 
 
 
-    public LevelSelectionScreen() {
+    public LevelSelectionScreen(FileController fileController) {
+
+        this.fileController= fileController;
         initialize();
-
     }
 
 
@@ -69,10 +73,11 @@ public class LevelSelectionScreen extends BorderPane {
         xButton.setTooltip(new Tooltip("Close"));
         xButton.setTranslateX(760);
         xButton.setTranslateY(10);
-        title = new Label();
-        title.setText("modeTitle");
-        title.setScaleX(2);
-        title.setScaleY(2);
+        modeTitle = new Label();
+        modeTitle.setText(fileController.getModeTitle());
+        System.out.println(fileController.getModeTitle());
+        modeTitle.setScaleX(2);
+        modeTitle.setScaleY(2);
         list = new VBox(50);
         list.setTranslateY(-30);
         list.setStyle("-fx-background-color: mediumpurple;");
@@ -80,11 +85,18 @@ public class LevelSelectionScreen extends BorderPane {
         list.getChildren().addAll(profileButton, homeButton);
         closeHBox = new HBox(200);
         closeHBox.getChildren().add(xButton);
-        titleHBox = new HBox(100);
-        titleHBox.getChildren().add(title);
-        titleHBox.setAlignment(Pos.CENTER);
+        modeTitleHBox = new HBox(100);
+        modeTitleHBox.getChildren().add(modeTitle);
+        modeTitleHBox.setAlignment(Pos.CENTER);
+        title = new Label();
+        title.setText("!! BUZZWORD !!");
+        title.setTranslateX(350);
+        title.setScaleY(2);
+        title.setScaleX(2);
+        titleHBox = new HBox();
+        titleHBox.getChildren().addAll(title);
         topVBox = new VBox(50);
-        topVBox.getChildren().addAll(closeHBox, titleHBox);
+        topVBox.getChildren().addAll(closeHBox, titleHBox, modeTitleHBox);
         one = new Button();
         one.setText("1");
         one.setScaleX(2);
@@ -144,18 +156,11 @@ public class LevelSelectionScreen extends BorderPane {
         this.toFront();
     }
 
+
     public void initializeLevelHandlers(AppTemplate app) throws InstantiationException {
-        try {
-            Method getFileControllerClassMethod = app.getClass().getMethod("getFileControllerClass");
-            String fileControllerClassName = (String) getFileControllerClassMethod.invoke(app);
-            Class<?> klass = Class.forName("controller." + fileControllerClassName);
-            Constructor<?> constructor = klass.getConstructor(AppTemplate.class);
-            fileController = (FileController) constructor.newInstance(app);
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | ClassNotFoundException e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
+
         one.setOnAction(e -> {
+            level = 1;
             try {
                 fileController.handleOneRequest();
             } catch (IOException e1) {
@@ -164,6 +169,7 @@ public class LevelSelectionScreen extends BorderPane {
             }
         });
         two.setOnAction(e -> {
+            level = 2;
             try {
                 fileController.handleTwoRequest();
             } catch (IOException e1) {
@@ -172,6 +178,7 @@ public class LevelSelectionScreen extends BorderPane {
             }
         });
         three.setOnAction(e -> {
+            level = 3;
             try {
                 fileController.handleThreeRequest();
             } catch (IOException e1) {
@@ -180,6 +187,7 @@ public class LevelSelectionScreen extends BorderPane {
             }
         });
         four.setOnAction(e -> {
+            level = 4;
             try {
                 fileController.handleFourRequest();
             } catch (IOException e1) {
@@ -188,6 +196,7 @@ public class LevelSelectionScreen extends BorderPane {
             }
         });
         five.setOnAction(e -> {
+            level = 5;
             try {
                 fileController.handleFiveRequest();
             } catch (IOException e1) {
@@ -196,6 +205,7 @@ public class LevelSelectionScreen extends BorderPane {
             }
         });
         six.setOnAction(e -> {
+            level = 6;
             try {
                 fileController.handleSixRequest();
             } catch (IOException e1) {
@@ -204,6 +214,7 @@ public class LevelSelectionScreen extends BorderPane {
             }
         });
         seven.setOnAction(e -> {
+            level = 7;
             try {
                 fileController.handleSevenRequest();
             } catch (IOException e1) {
@@ -212,6 +223,7 @@ public class LevelSelectionScreen extends BorderPane {
             }
         });
         eight.setOnAction(e -> {
+            level = 8;
             try {
                 fileController.handleEightRequest();
             } catch (IOException e1) {
@@ -243,6 +255,10 @@ public class LevelSelectionScreen extends BorderPane {
                 System.exit(1);
             }
         });
+    }
+
+    public int getLevel() {
+        return level;
     }
 
 }
