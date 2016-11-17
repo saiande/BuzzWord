@@ -14,7 +14,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 /**
- * @author Ritwik Banerjee
+ * @author Sai Ande
  */
 public class LoginSingleton extends Stage {
     // HERE'S THE SINGLETON

@@ -3,29 +3,15 @@ package ui;
 import apptemplate.AppTemplate;
 import controller.FileController;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Tooltip;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import propertymanager.PropertyManager;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-
-import static settings.InitializationParameters.APP_IMAGEDIR_PATH;
 
 /**
  * This class provides the basic user interface for this application, including all the file controls, but it does not
@@ -38,31 +24,19 @@ public class AppGUI {
         HOME, LEVEL, GAMEPLAY
     }
 
-    protected FileController fileController;   // to react to file-related controls
-    protected Stage primaryStage;     // the application window
-    protected Scene primaryScene;     // the scene graph
-    protected StackPane appPane;
-    protected HomeScreen home;
-
-    public LevelSelectionScreen getLevel() {
-        return level;
-    }
-
-    public GamePlayScreen getGameplay(){
-        return gameplay;
-    }
-
-    public void setLevel(LevelSelectionScreen level) {
-        this.level = level;
-    }
-
-    protected LevelSelectionScreen level;
-    protected GamePlayScreen gameplay;
-    public    String applicationTitle; // the application title
-    public AppTemplate apptemplate;
-    public Pane clearPane;
-    private int appWindowWidth;  // optional parameter for window width that can be set by the application
-    private int appWindowHeight; // optional parameter for window height that can be set by the application
+    protected   FileController          fileController;   // to react to file-related controls
+    protected   Stage                   primaryStage;     // the application window
+    protected   Scene                   primaryScene;     // the scene graph
+    protected   StackPane               appPane;          // stack pane holding all screens
+    protected   HomeScreen              home;             // home screen instance
+    protected   LevelSelectionScreen    level;            // level screen instance
+    protected   GamePlayScreen          gameplay;         // gameplay screen instance
+    public      String                  applicationTitle; // the application title
+    public      AppTemplate             apptemplate;      // apptemplate instance
+    public      Pane                    clearPane;        // login screen
+    public      Pane                    profileClearPane; // create profile screen
+    private     int                     appWindowWidth;   // optional parameter for window width that can be set by the application
+    private     int                     appWindowHeight;  // optional parameter for window height that can be set by the application
 
     /**
      * This constructor initializes the file toolbar for use.
@@ -94,6 +68,8 @@ public class AppGUI {
         this.primaryStage = primaryStage;
         this.applicationTitle = applicationTitle;
         this.home = new HomeScreen(fileController);
+        //this.level = new LevelSelectionScreen(fileController);
+        //this.gameplay = new GamePlayScreen(fileController);
         initializeScreen(Screen.HOME);
         home.initializeHomeHandlers(appTemplate);
         initializeWindow();                     // start the app window (without the application-specific workspace)
@@ -121,6 +97,18 @@ public class AppGUI {
 
     public StackPane getAppPane() {
         return appPane;
+    }
+
+    public LevelSelectionScreen getLevel() {
+        return level;
+    }
+
+    public GamePlayScreen getGameplay(){
+        return gameplay;
+    }
+
+    public void setLevel(LevelSelectionScreen level) {
+        this.level = level;
     }
 
     /**

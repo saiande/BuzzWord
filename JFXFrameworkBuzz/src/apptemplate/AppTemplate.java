@@ -64,8 +64,8 @@ public abstract class AppTemplate extends Application {
             if (loadProperties(APP_PROPERTIES_XML) && loadProperties(WORKSPACE_PROPERTIES_XML)) {
                 AppComponentsBuilder builder = makeAppBuilderHook();
 
-                //fileComponent = builder.buildFileComponent();
-                //dataComponent = builder.buildDataComponent();
+                fileComponent = builder.buildFileComponent();
+                dataComponent = builder.buildDataComponent();
                 gui = (propertyManager.hasProperty(APP_WINDOW_WIDTH) && propertyManager.hasProperty(APP_WINDOW_HEIGHT))
                         ? new AppGUI(primaryStage, propertyManager.getPropertyValue(APP_TITLE.toString()), this,
                         Integer.parseInt(propertyManager.getPropertyValue(APP_WINDOW_WIDTH)),

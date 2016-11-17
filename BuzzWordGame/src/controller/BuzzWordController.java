@@ -2,13 +2,17 @@ package controller;
 
 import apptemplate.AppTemplate;
 import data.GameData;
-import ui.AppGUI;
-import ui.GamePlayScreen;
-import ui.HomeScreen;
-import ui.LevelSelectionScreen;
+import propertymanager.PropertyManager;
+import ui.*;
 
 import java.io.IOException;
-import java.util.logging.Level;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import static settings.AppPropertyType.APP_TITLE;
+import static settings.AppPropertyType.SAVE_COMPLETED_MESSAGE;
+import static settings.AppPropertyType.SAVE_COMPLETED_TITLE;
+import static settings.InitializationParameters.APP_WORKDIR_PATH;
 
 /**
  * Created by sai on 11/7/16.
@@ -20,6 +24,7 @@ public class BuzzWordController implements FileController {
     public HomeScreen home;
     public String modeTitle;
     public int level;
+    private Path workFile;
     public BuzzWordController(AppTemplate apptemplate)
     {
         this.app = apptemplate;
@@ -40,6 +45,11 @@ public class BuzzWordController implements FileController {
 
     @Override
     public void handleCreateProfileRequest() throws IOException {
+        try {
+            app.getGUI().getHome().profileHandlers(app);
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -87,6 +97,21 @@ public class BuzzWordController implements FileController {
 
     @Override
     public void handleXRequest() throws IOException {
+        PropertyManager propertyManager = PropertyManager.getManager();
+        Path        appDirPath  = Paths.get(propertyManager.getPropertyValue(APP_TITLE)).toAbsolutePath();
+        Path        targetPath  = appDirPath.resolve(APP_WORKDIR_PATH.getParameter());
+            save(targetPath);
+
+    }
+    private void save(Path target) throws IOException {
+
+        app.getFileComponent().saveData(app.getDataComponent(), target);
+        GameData gamedatatest = (GameData) app.getDataComponent();
+
+        workFile = target;
+        AppMessageDialogSingleton dialog = AppMessageDialogSingleton.getSingleton();
+        PropertyManager           props  = PropertyManager.getManager();
+        dialog.show(props.getPropertyValue(SAVE_COMPLETED_TITLE), props.getPropertyValue(SAVE_COMPLETED_MESSAGE));
 
     }
 

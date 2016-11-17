@@ -8,10 +8,10 @@ import components.AppWorkspaceComponent;
 import data.GameData;
 import data.GameDataManager;
 import gui.Workspace;
-import ui.AppGUI;
 
 /**
  * @author Ritwik Banerjee
+ * @author Sai Ande
  */
 public class buzzword extends AppTemplate {
 
@@ -27,15 +27,15 @@ public class buzzword extends AppTemplate {
     @Override
     public AppComponentsBuilder makeAppBuilderHook() {
         return new AppComponentsBuilder() {
-//            @Override
-//            public AppDataComponent buildDataComponent() throws Exception {
-//                return new GameData(buzzword.this);
-//            }
-//
-//            @Override
-//            public AppFileComponent buildFileComponent() throws Exception {
-//                return new GameData();
-//            }
+            @Override
+            public AppDataComponent buildDataComponent() throws Exception {
+                return new GameData(buzzword.this);
+            }
+
+            @Override
+            public AppFileComponent buildFileComponent() throws Exception {
+                return new GameDataManager();
+            }
 
             @Override
             public AppWorkspaceComponent buildWorkspaceComponent() throws Exception {

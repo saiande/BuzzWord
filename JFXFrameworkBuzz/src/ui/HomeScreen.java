@@ -4,66 +4,48 @@ import apptemplate.AppTemplate;
 import controller.FileController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.geometry.*;
 import javafx.geometry.Insets;
-import javafx.scene.Scene;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
-import propertymanager.PropertyManager;
-import sun.font.TextLabel;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 
-import javax.swing.*;
-import java.awt.*;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-
-import static settings.AppPropertyType.*;
-import static settings.InitializationParameters.APP_IMAGEDIR_PATH;
 
 /**
  * Created by sai on 11/7/16.
  */
 public class HomeScreen extends BorderPane {
 
-    protected FileController fileController;
-    protected Button createProfileButton;
-    protected Button loginButton;
-    protected Button profileButton;
-    protected Button xButton;
+    //Controls for initial home screen
+    protected FileController    fileController;
+    protected Button            xButton;
+    protected Label             title;
+    protected HBox              closeHBox;
+    protected HBox              titleHBox;
+    protected VBox              topVBox;
+    protected Button            createProfileButton;
+    protected Button            loginButton;
+    protected Button            help;
+    protected VBox              list;
 
-    public ComboBox getSelectMode() {
-        return selectMode;
-    }
+    //Controls for home screen after login
+    protected Button    profileButton;
+    protected ComboBox  selectMode;
+    protected Button    startPlayingButton;
+    protected VBox      secondList;
 
-    protected ComboBox selectMode;
-    protected Button startPlayingButton;
-    protected VBox list;
-    protected VBox secondList;
-    protected VBox topVBox;
-    protected HBox closeHBox;
-    protected HBox titleHBox;
-    protected Label title;
-    protected String modeTitle;
-    protected static Pane clearPane;
-    public Pane getClearPane() {
-        return clearPane;
-    }
+    protected String    modeTitle;          //used in level selection screen
+    protected Pane      clearPane;
+    protected Pane      profileClearPane;
+    public String usernameString;
+    public String passWordString;
 
-
+    //constructor
     public HomeScreen(FileController fileController) {
         this.fileController = fileController;
 
@@ -71,47 +53,56 @@ public class HomeScreen extends BorderPane {
     public void initialize() {
         this.setPrefSize(800, 650);
         this.setStyle("-fx-background-color: lightseagreen;");
-
-        createProfileButton = new Button();
-        createProfileButton.setText("Create Profile");
-        loginButton = new Button();
-        loginButton.setText("Login");
+        //top of the screen including close button and title
         xButton = new Button();
         xButton.setText("x");
         xButton.setTooltip(new Tooltip("Close"));
         xButton.setTranslateX(760);
         xButton.setTranslateY(10);
+        closeHBox = new HBox(200);
+        closeHBox.getChildren().add(xButton);
         title = new Label();
         title.setText("!! BUZZWORD !!");
         title.setScaleX(2);
         title.setScaleY(2);
-        list = new VBox(50);
-        list.setTranslateY(-30);
-        list.setStyle("-fx-background-color: mediumpurple;");
-        list.setPadding(new Insets(200, 50, 50, 50));
-        list.getChildren().addAll(createProfileButton, loginButton);
-        closeHBox = new HBox(200);
-        closeHBox.getChildren().add(xButton);
         titleHBox = new HBox(100);
         titleHBox.getChildren().add(title);
         titleHBox.setAlignment(Pos.CENTER);
         topVBox = new VBox(50);
         topVBox.getChildren().addAll(closeHBox, titleHBox);
-
+        this.setTop(topVBox);
+        //left side of screen including buttons
+        createProfileButton = new Button();
+        createProfileButton.setText("Create Profile");
+        loginButton = new Button();
+        loginButton.setText("Login");
+        help = new Button();
+        help.setText("Help");
+        list = new VBox(50);
+        list.setTranslateY(-30);
+        list.setStyle("-fx-background-color: mediumpurple;");
+        list.setPadding(new Insets(200, 50, 50, 50));
+        list.getChildren().addAll(createProfileButton, loginButton, help);
+        this.setLeft(list);
+        //setting logo in the middle of the screen
         Image image = new Image("file:BuzzWordGame/resources/images/Logo.png");
         ImageView imageview = new ImageView();
         imageview.setImage(image);
         imageview.setTranslateX(-90);
         imageview.setTranslateY(-20);
-        this.setTop(topVBox);
         this.setCenter(imageview);
-        this.setLeft(list);
+        //clear pane for login information
         clearPane = new Pane();
         clearPane.setPrefSize(800, 650);
         clearPane.setStyle("-fx-background-color: rgba(0, 100, 100, 0.2);");
     }
 
-
+    public ComboBox getSelectMode() {
+        return selectMode;
+    }
+    public Pane getClearPane() {
+        return clearPane;
+    }
     public void initializeHomeHandlers(AppTemplate app) throws InstantiationException {
         createProfileButton.setOnAction(e -> {
             try {
@@ -138,18 +129,79 @@ public class HomeScreen extends BorderPane {
             }
         });
     }
-    public void loginHandlers(AppTemplate app) throws InstantiationException {
 
+    public String getUsernameString() {
+        return usernameString;
+    }
 
+    public String getPassWordString() {
+        return passWordString;
+    }
+
+    public void profileHandlers(AppTemplate app) throws InstantiationException{
         clearPane.toFront();
-//        PropertyManager propertyManager = PropertyManager.getManager();
-//        LoginSingleton dialog = LoginSingleton.getSingleton();
-//        dialog.show(propertyManager.getPropertyValue("Login"),
-//                propertyManager.getPropertyValue("Username "));
         HBox    username = new HBox();
         HBox password = new HBox();
         HBox buttonBox = new HBox();
         VBox   box = new VBox();
+        Label title = new Label();
+        box.setPrefSize(400, 150);
+        title.setText("Create a New Profile");
+        Label  nameLabel = new Label();
+        nameLabel.setText("Username: ");
+        Label  passwordLabel = new Label();
+        passwordLabel.setText("Password: ");
+        TextField enterUsername = new TextField();
+        TextField enterPassword = new TextField();
+        Button createButton = new Button();
+        createButton.setText("Create");
+        Button cancelButton = new Button();
+        cancelButton.setText("Cancel");
+        buttonBox.getChildren().addAll(createButton, cancelButton);
+        username.getChildren().addAll(nameLabel, enterUsername);
+        password.getChildren().addAll(passwordLabel, enterPassword);
+        box.getChildren().addAll(title, username, password, buttonBox);
+        username.setPadding(new Insets(10,10,10,10));
+        password.setPadding(new Insets(10, 10, 10, 10));
+        buttonBox.setPadding(new Insets(10,10,10,10));
+        box.setPadding(new Insets(50,50,50,50));
+        clearPane.getChildren().addAll(box);
+        box.setTranslateX(300);
+        box.setTranslateY(300);
+        box.setStyle("-fx-background-color: mediumpurple;");
+
+
+        createButton.setOnAction(e -> {
+            try {
+                usernameString = enterUsername.getText();
+                passWordString = enterPassword.getText();
+                box.setVisible(false);
+                clearPane.toBack();
+                fileController.handleEnterRequest();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+                System.exit(1);
+            }
+        });
+        cancelButton.setOnAction(e -> {
+            try {
+                box.setVisible(false);
+                clearPane.toBack();
+                fileController.handleCancelRequest();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+                System.exit(1);
+            }
+        });
+}
+    public void loginHandlers(AppTemplate app) throws InstantiationException {
+
+
+        clearPane.toFront();
+        HBox    username = new HBox();
+        HBox    password = new HBox();
+        HBox    buttonBox = new HBox();
+        VBox    box = new VBox();
         box.setPrefSize(400, 150);
         Label  nameLabel = new Label();
         nameLabel.setText("Username: ");
@@ -174,8 +226,11 @@ public class HomeScreen extends BorderPane {
         box.setTranslateY(300);
         box.setStyle("-fx-background-color: mediumpurple;");
 
+
         enterButton.setOnAction(e -> {
             try {
+                usernameString = enterUsername.getText();
+                passWordString = enterPassword.getText();
                 box.setVisible(false);
                 clearPane.toBack();
                 fileController.handleEnterRequest();

@@ -9,5 +9,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="XMLUtils" />
     <orderEntry type="module" module-name="BuzzWordGame" />
+    <orderEntry type="library" name="lib" level="project" />
   </component>
 </module>
