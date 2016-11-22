@@ -11,8 +11,6 @@ public interface FileController {
 
     void handleCreateProfileRequest() throws IOException;
 
-    void handleLoginLogoutRequest() throws IOException;
-
     void handleProfileRequest() throws IOException;
 
     void handleSelectModeRequest() throws IOException;
@@ -44,6 +42,14 @@ public interface FileController {
     void handleEnterRequest() throws IOException;
 
     void handleCancelRequest() throws IOException;
+
+    void handleHelpRequest() throws IOException;
+
+    void handleCreateRequest() throws IOException;
+
+    void handleResumeRequest() throws IOException;
+
+    String getUsername() throws IOException;
 
     String getModeTitle();
 

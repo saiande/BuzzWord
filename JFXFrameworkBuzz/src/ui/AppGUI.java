@@ -2,6 +2,7 @@ package ui;
 
 import apptemplate.AppTemplate;
 import controller.FileController;
+import data.GameData;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -34,9 +35,10 @@ public class AppGUI {
     public      String                  applicationTitle; // the application title
     public      AppTemplate             apptemplate;      // apptemplate instance
     public      Pane                    clearPane;        // login screen
-    public      Pane                    profileClearPane; // create profile screen
+    public      Pane                    hideScreen;       //Play Pause screen to block game board
     private     int                     appWindowWidth;   // optional parameter for window width that can be set by the application
     private     int                     appWindowHeight;  // optional parameter for window height that can be set by the application
+    public GameData                     gamedata;
 
     /**
      * This constructor initializes the file toolbar for use.
@@ -63,13 +65,15 @@ public class AppGUI {
         } catch (InstantiationException e) {
             e.printStackTrace();
         }
+        this.apptemplate = appTemplate;
         this.appWindowWidth = appWindowWidth;
         this.appWindowHeight = appWindowHeight;
         this.primaryStage = primaryStage;
         this.applicationTitle = applicationTitle;
-        this.home = new HomeScreen(fileController);
-        //this.level = new LevelSelectionScreen(fileController);
-        //this.gameplay = new GamePlayScreen(fileController);
+        this.gamedata = (GameData) apptemplate.getDataComponent();
+        this.home = new HomeScreen(fileController, gamedata);
+        this.level = new LevelSelectionScreen(fileController, gamedata);
+        this.gameplay = new GamePlayScreen(fileController, gamedata);
         initializeScreen(Screen.HOME);
         home.initializeHomeHandlers(appTemplate);
         initializeWindow();                     // start the app window (without the application-specific workspace)
@@ -81,14 +85,8 @@ public class AppGUI {
             home.initialize();
         if (screen == Screen.LEVEL)
             level.initialize();
-        if (screen == Screen.GAMEPLAY) {
+        if (screen == Screen.GAMEPLAY)
             gameplay.initialize();
-            try {
-                gameplay.initializeGamePlayHandlers(apptemplate);
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     public FileController getFileController() {
@@ -111,39 +109,27 @@ public class AppGUI {
         this.level = level;
     }
 
-    /**
-     * Accessor method for getting this application's primary stage's,
-     * scene.
-     *
-     * @return This application's window's scene.
-     */
     public Scene getPrimaryScene() {
         return primaryScene;
     }
 
-    /**
-     * Accessor method for getting this application's window,
-     * which is the primary stage within which the full GUI will be placed.
-     *
-     * @return This application's primary stage (i.e. window).
-     */
     public Stage getWindow() {
         return primaryStage;
     }
 
+    public HomeScreen getHome() {
+        return home;
+    }
+
     private void initializeWindow() throws IOException {
         PropertyManager propertyManager = PropertyManager.getManager();
-
-
         // SET THE WINDOW TITLE
         applicationTitle = "!! BUZZWORD !!";
         primaryStage.setTitle(applicationTitle);
-        //add the toolbar to the constructed workspace
-        //level = new LevelSelectionScreen();
-        //gameplay = new GamePlayScreen();
         clearPane = home.getClearPane();
+        hideScreen = gameplay.getHideScreen();
         appPane = new StackPane();
-        appPane.getChildren().addAll(clearPane, home);
+        appPane.getChildren().addAll(clearPane, home, level, hideScreen, gameplay);
         home.toFront();
         primaryScene = appWindowWidth < 1 || appWindowHeight < 1 ? new Scene(appPane)
                 : new Scene(appPane,
@@ -151,10 +137,6 @@ public class AppGUI {
                 appWindowHeight);
         primaryStage.setScene(primaryScene);
         primaryStage.show();
-    }
-    public HomeScreen getHome()
-    {
-        return home;
     }
 
 }

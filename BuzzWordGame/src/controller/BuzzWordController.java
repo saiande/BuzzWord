@@ -3,31 +3,31 @@ package controller;
 import apptemplate.AppTemplate;
 import data.GameData;
 import propertymanager.PropertyManager;
-import ui.*;
+import ui.AppMessageDialogSingleton;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static settings.AppPropertyType.APP_TITLE;
-import static settings.AppPropertyType.SAVE_COMPLETED_MESSAGE;
-import static settings.AppPropertyType.SAVE_COMPLETED_TITLE;
+import static settings.AppPropertyType.*;
 import static settings.InitializationParameters.APP_WORKDIR_PATH;
 
 /**
  * Created by sai on 11/7/16.
  */
 public class BuzzWordController implements FileController {
-    public AppTemplate app;
-    public AppGUI gui;
-    public GameData gamedata;
-    public HomeScreen home;
-    public String modeTitle;
-    public int level;
-    private Path workFile;
+    public AppTemplate  app;
+    public GameData     gamedata;
+    public String       modeTitle;
+    public int          level;
+    private Path        workFile;
+    public String       username;
+
+    //constructor
     public BuzzWordController(AppTemplate apptemplate)
     {
         this.app = apptemplate;
+        this.gamedata = (GameData) this.app.getDataComponent();
     }
 
     @Override
@@ -40,7 +40,6 @@ public class BuzzWordController implements FileController {
         } catch (InstantiationException e) {
             e.printStackTrace();
         }
-        //app.getGUI().getAppPane().getChildren().get(2).toBack();
     }
 
     @Override
@@ -50,12 +49,6 @@ public class BuzzWordController implements FileController {
         } catch (InstantiationException e) {
             e.printStackTrace();
         }
-
-    }
-
-    @Override
-    public void handleLoginLogoutRequest() throws IOException {
-
     }
 
     @Override
@@ -72,26 +65,35 @@ public class BuzzWordController implements FileController {
 
     @Override
     public void handleStartPlayingRequest() throws IOException {
-        try{
-        if(app.getGUI().getLevel() == null) {
-            LevelSelectionScreen level = new LevelSelectionScreen(this);
-            level.initialize();
-            level.initializeLevelHandlers(app);
-            app.getGUI().setLevel(level);
-            app.getGUI().getAppPane().getChildren().add(level);
-            level.toFront();
-        }
-        else {
-            app.getGUI().getLevel().toFront();
-
-        }
+        app.getGUI().getLevel().toFront();
+        //app.getGUI().getLevel().initialize();
+        try {
+            app.getGUI().getLevel().initializeLevelHandlers(app);
         } catch (InstantiationException e) {
             e.printStackTrace();
         }
+
+//        try{
+//        if(app.getGUI().getLevel() == null) {
+//            LevelSelectionScreen level = new LevelSelectionScreen(this);
+//            level.initialize();
+//            level.initializeLevelHandlers(app);
+//            app.getGUI().setLevel(level);
+//            app.getGUI().getAppPane().getChildren().add(level);
+//            level.toFront();
+//        }
+//        else {
+//            app.getGUI().getLevel().toFront();
+//
+//        }
+//        } catch (InstantiationException e) {
+//            e.printStackTrace();
+//        }
     }
 
     @Override
     public void handlePlayPauseRequest() throws IOException {
+            app.getGUI().getGameplay().getHideScreen().toFront();
 
     }
 
@@ -127,132 +129,153 @@ public class BuzzWordController implements FileController {
 
     @Override
     public void handleOneRequest() throws IOException {
-        GamePlayScreen gameplay = new GamePlayScreen(this);
         level = 1;
-        gameplay.initialize();
+        app.getGUI().getGameplay().toFront();
+        //app.getGUI().getGameplay().initialize();
         try {
-            gameplay.initializeGamePlayHandlers(app);
+            app.getGUI().getGameplay().initializeGamePlayHandlers(app);
         } catch (InstantiationException e) {
             e.printStackTrace();
         }
-        app.getGUI().getAppPane().getChildren().add(gameplay);
-        gameplay.toFront();
+//        GamePlayScreen gameplay = new GamePlayScreen(this);
+//        level = 1;
+//        gameplay.initialize();
+//        try {
+//            gameplay.initializeGamePlayHandlers(app);
+//        } catch (InstantiationException e) {
+//            e.printStackTrace();
+//        }
+//        app.getGUI().getAppPane().getChildren().add(gameplay);
+//        gameplay.toFront();
 
     }
 
     @Override
     public void handleTwoRequest() throws IOException {
-        GamePlayScreen gameplay = new GamePlayScreen(this);
         level = 2;
-        gameplay.initialize();
+        app.getGUI().getGameplay().toFront();
+        //app.getGUI().getGameplay().initialize();
         try {
-            gameplay.initializeGamePlayHandlers(app);
+            app.getGUI().getGameplay().initializeGamePlayHandlers(app);
         } catch (InstantiationException e) {
             e.printStackTrace();
         }
-        app.getGUI().getAppPane().getChildren().add(gameplay);
-        gameplay.toFront();
 
     }
 
     @Override
     public void handleThreeRequest() throws IOException {
-        GamePlayScreen gameplay = new GamePlayScreen(this);
         level = 3;
-        gameplay.initialize();
+        app.getGUI().getGameplay().toFront();
+        //app.getGUI().getGameplay().initialize();
         try {
-            gameplay.initializeGamePlayHandlers(app);
+            app.getGUI().getGameplay().initializeGamePlayHandlers(app);
         } catch (InstantiationException e) {
             e.printStackTrace();
         }
-        app.getGUI().getAppPane().getChildren().add(gameplay);
-        gameplay.toFront();
-
-
     }
 
     @Override
     public void handleFourRequest() throws IOException {
-        GamePlayScreen gameplay = new GamePlayScreen(this);
         level = 4;
-        gameplay.initialize();
+        app.getGUI().getGameplay().toFront();
+        //app.getGUI().getGameplay().initialize();
         try {
-            gameplay.initializeGamePlayHandlers(app);
+            app.getGUI().getGameplay().initializeGamePlayHandlers(app);
         } catch (InstantiationException e) {
             e.printStackTrace();
         }
-        app.getGUI().getAppPane().getChildren().add(gameplay);
-        gameplay.toFront();
-
-
     }
 
     @Override
     public void handleFiveRequest() throws IOException {
-        GamePlayScreen gameplay = new GamePlayScreen(this);
         level = 5;
-        gameplay.initialize();
+        app.getGUI().getGameplay().toFront();
+        //app.getGUI().getGameplay().initialize();
         try {
-            gameplay.initializeGamePlayHandlers(app);
+            app.getGUI().getGameplay().initializeGamePlayHandlers(app);
         } catch (InstantiationException e) {
             e.printStackTrace();
         }
-        app.getGUI().getAppPane().getChildren().add(gameplay);
-        gameplay.toFront();
-
 
     }
 
     @Override
     public void handleSixRequest() throws IOException {
-        GamePlayScreen gameplay = new GamePlayScreen(this);
         level = 6;
-        gameplay.initialize();
+        app.getGUI().getGameplay().toFront();
+        //app.getGUI().getGameplay().initialize();
         try {
-            gameplay.initializeGamePlayHandlers(app);
+            app.getGUI().getGameplay().initializeGamePlayHandlers(app);
         } catch (InstantiationException e) {
             e.printStackTrace();
         }
-        app.getGUI().getAppPane().getChildren().add(gameplay);
-        gameplay.toFront();
-
-
     }
 
     @Override
     public void handleSevenRequest() throws IOException {
-        GamePlayScreen gameplay = new GamePlayScreen(this);
         level = 7;
-        gameplay.initialize();
+        app.getGUI().getGameplay().toFront();
+        //app.getGUI().getGameplay().initialize();
         try {
-            gameplay.initializeGamePlayHandlers(app);
+            app.getGUI().getGameplay().initializeGamePlayHandlers(app);
         } catch (InstantiationException e) {
             e.printStackTrace();
         }
-        app.getGUI().getAppPane().getChildren().add(gameplay);
-        gameplay.toFront();
-
 
     }
 
     @Override
     public void handleEightRequest() throws IOException {
-        GamePlayScreen gameplay = new GamePlayScreen(this);
         level = 8;
-        gameplay.initialize();
+        app.getGUI().getGameplay().toFront();
+        //app.getGUI().getGameplay().initialize();
         try {
-            gameplay.initializeGamePlayHandlers(app);
+            app.getGUI().getGameplay().initializeGamePlayHandlers(app);
         } catch (InstantiationException e) {
             e.printStackTrace();
         }
-        app.getGUI().getAppPane().getChildren().add(gameplay);
-        gameplay.toFront();
-
-
     }
 
     @Override
     public void handleEnterRequest() throws IOException {
+        PropertyManager propertyManager = PropertyManager.getManager();
+        Path        appDirPath  = Paths.get(propertyManager.getPropertyValue(APP_TITLE)).toAbsolutePath();
+        read(appDirPath);
+        app.getGUI().getHome().initialize();
+        try {
+            app.getGUI().getHome().afterLoginProfileHandlers(app);
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        }
+    }
+    private void read(Path target) throws IOException {
+        app.getFileComponent().loadData(app.getDataComponent(), target);
+        GameData gamedatatest = (GameData) app.getDataComponent();
+
+        workFile = target;
+    }
+
+
+    @Override
+    public void handleCancelRequest() throws IOException {
+
+    }
+
+    @Override
+    public void handleHelpRequest() throws IOException {
+
+    }
+
+    @Override
+    public void handleCreateRequest() throws IOException {
+        PropertyManager propertyManager = PropertyManager.getManager();
+        Path        appDirPath  = Paths.get(propertyManager.getPropertyValue(APP_TITLE)).toAbsolutePath();
+        String username;
+        username = gamedata.getUsername();
+        Path        targetPath  = appDirPath.resolve(username+"_"+APP_WORKDIR_PATH.getParameter());
+
+        saved(targetPath);
 
         app.getGUI().getHome().initialize();
         try {
@@ -263,7 +286,19 @@ public class BuzzWordController implements FileController {
     }
 
     @Override
-    public void handleCancelRequest() throws IOException {
+    public void handleResumeRequest() throws IOException {
+
+    }
+
+
+    private void saved(Path target) throws IOException {
+        app.getFileComponent().saveData(app.getDataComponent(), target);
+        GameData gamedatatest = (GameData) app.getDataComponent();
+
+        workFile = target;
+        AppMessageDialogSingleton dialog = AppMessageDialogSingleton.getSingleton();
+        PropertyManager           props  = PropertyManager.getManager();
+        dialog.show(props.getPropertyValue(SAVE_COMPLETED_TITLE), props.getPropertyValue(SAVE_COMPLETED_MESSAGE));
 
     }
 
@@ -275,6 +310,11 @@ public class BuzzWordController implements FileController {
     @Override
     public int getLevel() {
         return level;
+    }
+
+    public String getUsername() throws IOException{
+        username = gamedata.getUsername();
+        return username;
     }
 
 }

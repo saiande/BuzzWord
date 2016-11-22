@@ -12,8 +12,25 @@ public class GameData implements AppDataComponent {
 
     private String      username;
     private String      password;
-    private int         level;
+    private int      animals;
+    public int       dict;
     public AppTemplate appTemplate;
+
+    public int getAnimals() {
+        return animals;
+    }
+
+    public void setAnimals(int animals) {
+        this.animals = animals;
+    }
+
+    public int getDict() {
+        return dict;
+    }
+
+    public void setDict(int dict) {
+        this.dict = dict;
+    }
 
     public GameData(AppTemplate appTemplate) {
         this(appTemplate, false);
@@ -35,20 +52,13 @@ public class GameData implements AppDataComponent {
         this.password = password;
     }
 
-    public int getLevel() {
-        return level;
-    }
-
-    public void setLevel(int level) {
-        this.level = level;
-    }
-
     public GameData(AppTemplate appTemplate, boolean initiateGame) {
         if (initiateGame) {
             this.appTemplate = appTemplate;
             setUsername(appTemplate.getGUI().getHome().getUsernameString());
             setPassword(appTemplate.getGUI().getHome().getPassWordString());
-            setLevel(1);
+            setAnimals(1);
+            setDict(1);
         } else {
             this.appTemplate = appTemplate;
         }
@@ -59,7 +69,8 @@ public class GameData implements AppDataComponent {
     public void reset() {
         this.username = null;
         this.password = null;
-        this.level = 1;
+        this.animals = 1;
+        this.dict = 1;
         appTemplate.getWorkspaceComponent().reloadWorkspace();
     }
 

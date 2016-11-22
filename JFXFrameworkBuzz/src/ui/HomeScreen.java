@@ -2,6 +2,7 @@ package ui;
 
 import apptemplate.AppTemplate;
 import controller.FileController;
+import data.GameData;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -22,7 +23,9 @@ import java.io.IOException;
 public class HomeScreen extends BorderPane {
 
     //Controls for initial home screen
+    protected AppTemplate       app;
     protected FileController    fileController;
+    protected GameData          gamedata;
     protected Button            xButton;
     protected Label             title;
     protected HBox              closeHBox;
@@ -41,15 +44,16 @@ public class HomeScreen extends BorderPane {
 
     protected String    modeTitle;          //used in level selection screen
     protected Pane      clearPane;
-    protected Pane      profileClearPane;
-    public String usernameString;
-    public String passWordString;
+    public String       usernameString;
+    public String       passWordString;
 
     //constructor
-    public HomeScreen(FileController fileController) {
+    public HomeScreen(FileController fileController, GameData gamedata) {
         this.fileController = fileController;
-
+        this.gamedata = gamedata;
+        initialize();
     }
+
     public void initialize() {
         this.setPrefSize(800, 650);
         this.setStyle("-fx-background-color: lightseagreen;");
@@ -97,13 +101,24 @@ public class HomeScreen extends BorderPane {
         clearPane.setStyle("-fx-background-color: rgba(0, 100, 100, 0.2);");
     }
 
-    public ComboBox getSelectMode() {
-        return selectMode;
-    }
     public Pane getClearPane() {
         return clearPane;
     }
+
+    public String getUsernameString() {
+        return usernameString;
+    }
+
+    public String getPassWordString() {
+        return passWordString;
+    }
+
+    public String getModeTitle() {
+        return modeTitle;
+    }
+
     public void initializeHomeHandlers(AppTemplate app) throws InstantiationException {
+        this.app = app;
         createProfileButton.setOnAction(e -> {
             try {
                 fileController.handleCreateProfileRequest();
@@ -120,6 +135,14 @@ public class HomeScreen extends BorderPane {
                 System.exit(1);
             }
         });
+        help.setOnAction(e -> {
+            try {
+                fileController.handleHelpRequest();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+                System.exit(1);
+            }
+        });
         xButton.setOnAction(e -> {
             try {
                 fileController.handleXRequest();
@@ -128,14 +151,6 @@ public class HomeScreen extends BorderPane {
                 System.exit(1);
             }
         });
-    }
-
-    public String getUsernameString() {
-        return usernameString;
-    }
-
-    public String getPassWordString() {
-        return passWordString;
     }
 
     public void profileHandlers(AppTemplate app) throws InstantiationException{
@@ -175,9 +190,13 @@ public class HomeScreen extends BorderPane {
             try {
                 usernameString = enterUsername.getText();
                 passWordString = enterPassword.getText();
+                ((GameData)(app.getDataComponent())).setUsername(usernameString);
+                ((GameData)(app.getDataComponent())).setPassword(passWordString);
+                ((GameData)(app.getDataComponent())).setAnimals(1);
+                ((GameData)(app.getDataComponent())).setDict(1);
                 box.setVisible(false);
                 clearPane.toBack();
-                fileController.handleEnterRequest();
+                fileController.handleCreateRequest();
             } catch (IOException e1) {
                 e1.printStackTrace();
                 System.exit(1);
@@ -194,9 +213,8 @@ public class HomeScreen extends BorderPane {
             }
         });
 }
+
     public void loginHandlers(AppTemplate app) throws InstantiationException {
-
-
         clearPane.toFront();
         HBox    username = new HBox();
         HBox    password = new HBox();
@@ -231,9 +249,15 @@ public class HomeScreen extends BorderPane {
             try {
                 usernameString = enterUsername.getText();
                 passWordString = enterPassword.getText();
+                ((GameData)(app.getDataComponent())).setUsername(usernameString);
+                ((GameData)(app.getDataComponent())).setPassword(passWordString);
                 box.setVisible(false);
                 clearPane.toBack();
                 fileController.handleEnterRequest();
+                int easyLevel = 1;
+                int hardLevel = 1;
+                easyLevel = ((GameData)app.getDataComponent()).getAnimals();
+                hardLevel = ((GameData)app.getDataComponent()).getDict();
             } catch (IOException e1) {
                 e1.printStackTrace();
                 System.exit(1);
@@ -252,7 +276,6 @@ public class HomeScreen extends BorderPane {
 
     }
 
-
     public void afterLoginProfileHandlers(AppTemplate app) throws InstantiationException {
 
         secondList = new VBox(50);
@@ -260,8 +283,12 @@ public class HomeScreen extends BorderPane {
         secondList.setStyle("-fx-background-color: mediumpurple;");
         secondList.setPadding(new Insets(200, 0, 50, 50));
         profileButton = new Button();
-        profileButton.setText("Username");
-        ObservableList<String> options = FXCollections.observableArrayList("Dictionary Words", "Animals", "Places", "Science", "Famous People");
+        try {
+            profileButton.setText(fileController.getUsername());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        ObservableList<String> options = FXCollections.observableArrayList("Animals", "Dictionary Words");
         selectMode = new ComboBox(options);
         selectMode.setPromptText("Select Mode");
         selectMode.setTranslateX(-30);
@@ -303,8 +330,5 @@ public class HomeScreen extends BorderPane {
                 System.exit(1);
             }
         });
-    }
-    public String getModeTitle() {
-        return modeTitle;
     }
 }
