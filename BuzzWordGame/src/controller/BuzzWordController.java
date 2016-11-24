@@ -66,34 +66,21 @@ public class BuzzWordController implements FileController {
     @Override
     public void handleStartPlayingRequest() throws IOException {
         app.getGUI().getLevel().toFront();
-        //app.getGUI().getLevel().initialize();
         try {
             app.getGUI().getLevel().initializeLevelHandlers(app);
         } catch (InstantiationException e) {
             e.printStackTrace();
         }
 
-//        try{
-//        if(app.getGUI().getLevel() == null) {
-//            LevelSelectionScreen level = new LevelSelectionScreen(this);
-//            level.initialize();
-//            level.initializeLevelHandlers(app);
-//            app.getGUI().setLevel(level);
-//            app.getGUI().getAppPane().getChildren().add(level);
-//            level.toFront();
-//        }
-//        else {
-//            app.getGUI().getLevel().toFront();
-//
-//        }
-//        } catch (InstantiationException e) {
-//            e.printStackTrace();
-//        }
     }
 
     @Override
-    public void handlePlayPauseRequest() throws IOException {
-            app.getGUI().getGameplay().getHideScreen().toFront();
+    public void handlePauseRequest() throws IOException {
+        try {
+            app.getGUI().getGameplay().initializePauseHandlers(app);
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -131,22 +118,13 @@ public class BuzzWordController implements FileController {
     public void handleOneRequest() throws IOException {
         level = 1;
         app.getGUI().getGameplay().toFront();
-        //app.getGUI().getGameplay().initialize();
+
+        app.getGUI().getGameplay().initializeAnimalsOne();
         try {
             app.getGUI().getGameplay().initializeGamePlayHandlers(app);
         } catch (InstantiationException e) {
             e.printStackTrace();
         }
-//        GamePlayScreen gameplay = new GamePlayScreen(this);
-//        level = 1;
-//        gameplay.initialize();
-//        try {
-//            gameplay.initializeGamePlayHandlers(app);
-//        } catch (InstantiationException e) {
-//            e.printStackTrace();
-//        }
-//        app.getGUI().getAppPane().getChildren().add(gameplay);
-//        gameplay.toFront();
 
     }
 
@@ -154,7 +132,6 @@ public class BuzzWordController implements FileController {
     public void handleTwoRequest() throws IOException {
         level = 2;
         app.getGUI().getGameplay().toFront();
-        //app.getGUI().getGameplay().initialize();
         try {
             app.getGUI().getGameplay().initializeGamePlayHandlers(app);
         } catch (InstantiationException e) {
@@ -167,7 +144,6 @@ public class BuzzWordController implements FileController {
     public void handleThreeRequest() throws IOException {
         level = 3;
         app.getGUI().getGameplay().toFront();
-        //app.getGUI().getGameplay().initialize();
         try {
             app.getGUI().getGameplay().initializeGamePlayHandlers(app);
         } catch (InstantiationException e) {
@@ -179,7 +155,6 @@ public class BuzzWordController implements FileController {
     public void handleFourRequest() throws IOException {
         level = 4;
         app.getGUI().getGameplay().toFront();
-        //app.getGUI().getGameplay().initialize();
         try {
             app.getGUI().getGameplay().initializeGamePlayHandlers(app);
         } catch (InstantiationException e) {
@@ -187,62 +162,13 @@ public class BuzzWordController implements FileController {
         }
     }
 
-    @Override
-    public void handleFiveRequest() throws IOException {
-        level = 5;
-        app.getGUI().getGameplay().toFront();
-        //app.getGUI().getGameplay().initialize();
-        try {
-            app.getGUI().getGameplay().initializeGamePlayHandlers(app);
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    @Override
-    public void handleSixRequest() throws IOException {
-        level = 6;
-        app.getGUI().getGameplay().toFront();
-        //app.getGUI().getGameplay().initialize();
-        try {
-            app.getGUI().getGameplay().initializeGamePlayHandlers(app);
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void handleSevenRequest() throws IOException {
-        level = 7;
-        app.getGUI().getGameplay().toFront();
-        //app.getGUI().getGameplay().initialize();
-        try {
-            app.getGUI().getGameplay().initializeGamePlayHandlers(app);
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    @Override
-    public void handleEightRequest() throws IOException {
-        level = 8;
-        app.getGUI().getGameplay().toFront();
-        //app.getGUI().getGameplay().initialize();
-        try {
-            app.getGUI().getGameplay().initializeGamePlayHandlers(app);
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        }
-    }
 
     @Override
     public void handleEnterRequest() throws IOException {
         PropertyManager propertyManager = PropertyManager.getManager();
         Path        appDirPath  = Paths.get(propertyManager.getPropertyValue(APP_TITLE)).toAbsolutePath();
         read(appDirPath);
-        app.getGUI().getHome().initialize();
+        app.getGUI().getHome().toFront();
         try {
             app.getGUI().getHome().afterLoginProfileHandlers(app);
         } catch (InstantiationException e) {
@@ -287,7 +213,7 @@ public class BuzzWordController implements FileController {
 
     @Override
     public void handleResumeRequest() throws IOException {
-
+        app.getGUI().getGameplay().toFront();
     }
 
 

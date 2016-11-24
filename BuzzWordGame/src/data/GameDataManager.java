@@ -6,6 +6,8 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import components.AppDataComponent;
 import components.AppFileComponent;
+import propertymanager.PropertyManager;
+import ui.AppMessageDialogSingleton;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,6 +15,9 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
+import static settings.AppPropertyType.PROPERTIES_LOAD_ERROR_TITLE;
+import static settings.AppPropertyType.TRY_AGAIN;
 
 /**
  * @author Ritwik Banerjee
@@ -64,7 +69,6 @@ public class GameDataManager implements AppFileComponent {
         JsonFactory jsonFactory = new JsonFactory();
 
 
-        // gamedata.reset();
         File path = new File(from.toString());
         File[] files = path.listFiles();
         for (int i = 0; i < files.length; i++) {
@@ -72,7 +76,11 @@ public class GameDataManager implements AppFileComponent {
                 Path p = Paths.get(files[i].getAbsolutePath());
                 JsonParser jsonParser = jsonFactory.createParser(Files.newInputStream(p));
                 jsonParser.nextToken();
-                System.out.println(jsonParser.nextToken());
+                jsonParser.nextToken();
+                jsonParser.nextToken();
+                jsonParser.nextToken();
+                jsonParser.nextToken();
+                System.out.println(jsonParser.getValueAsString());
                 if (jsonParser.getValueAsString() == password) ;
                 {
                     jsonParser.nextToken();
@@ -81,8 +89,17 @@ public class GameDataManager implements AppFileComponent {
                     gamedata.setDict(jsonParser.getValueAsInt());
                 }
             }
-            else
-                System.out.println("No user");
+            else {
+                AppMessageDialogSingleton dialog = AppMessageDialogSingleton.getSingleton();
+                PropertyManager props = PropertyManager.getManager();
+                dialog.show(props.getPropertyValue(PROPERTIES_LOAD_ERROR_TITLE), props.getPropertyValue(TRY_AGAIN));
+                gamedata.appTemplate.getGUI().getHome().toFront();
+                try {
+                    gamedata.appTemplate.getGUI().getHome().initializeHomeHandlers(gamedata.appTemplate);
+                } catch (InstantiationException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 

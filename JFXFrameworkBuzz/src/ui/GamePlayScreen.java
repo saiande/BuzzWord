@@ -38,7 +38,7 @@ public class GamePlayScreen extends BorderPane {
     //bottom
     protected Label levelLabel;
     protected VBox bottomBox;
-    protected Button playPauseButton;
+    protected Button pauseButton;
     //right
     protected Integer seconds;
     protected Label timeRemainingLabel;
@@ -85,18 +85,17 @@ public class GamePlayScreen extends BorderPane {
         modeTitle = new Label();
         modeTitle.setScaleX(2);
         modeTitle.setScaleY(2);
-        modeTitle.setText(fileController.getModeTitle());
         titleVBox = new VBox(60);
         titleVBox.getChildren().addAll(title, modeTitle);
         titleVBox.setAlignment(Pos.CENTER);
-        titleVBox.setTranslateY(-60);
+        titleVBox.setTranslateY(-40);
+        titleVBox.setTranslateX(10);
         topVBox = new VBox(50);
         topVBox.getChildren().addAll(closeHBox, titleVBox);
         this.setTop(topVBox);
 
         //left
         profileButton = new Button();
-
         homeButton = new Button();
         homeButton.setText("Home");
         list = new VBox(50);
@@ -156,20 +155,16 @@ public class GamePlayScreen extends BorderPane {
         points.setStyle("-fx-background-color: mediumpurple;");
         points.getChildren().addAll(pointsLabel, pointsNumber);
         right = new VBox(20);
-        right.setStyle("-fx-background-color: lightseagreen;");
         right.getChildren().addAll(timeBox, wordGuessing, alreadyGuessedWords, total, points);
         this.setRight(right);
         //bottom
         levelLabel = new Label();
-        levelLabel.setText("Level: " + fileController.getLevel());
         levelLabel.setScaleX(1.5);
         levelLabel.setScaleY(1.5);
-        playPauseButton = new Button();
+        pauseButton = new Button();
         bottomBox = new VBox(10);
-        playPauseButton.setText("Play/ Pause");
-        bottomBox.getChildren().addAll(levelLabel, playPauseButton);
-        playPauseButton.setPrefSize(-1, -1);
-        playPauseButton.setDisable(false);
+        pauseButton.setText("Pause");
+        bottomBox.getChildren().addAll(levelLabel, pauseButton);
         bottomBox.setTranslateX(350);
         bottomBox.setTranslateY(-60);
         this.setBottom(bottomBox);
@@ -196,16 +191,18 @@ public class GamePlayScreen extends BorderPane {
                 letter.setTranslateX(33);
             }
         }
+        grid.setMaxSize(150, 150);
+        grid.setTranslateY(-20);
+        grid.setTranslateX(20);
         this.setCenter(grid);
-        grid.setPrefSize(150, 150);
-        grid.setTranslateY(40);
-        grid.setTranslateX(70);
+
 
         hideScreen = new Pane();
         hideScreen.setStyle("-fx-background-color: mediumpurple;");
         resumeButton = new Button();
         resumeButton.setText("Resume");
-        resumeButton.setAlignment(Pos.CENTER);
+        resumeButton.setTranslateX(300);
+        resumeButton.setTranslateY(300);
         hideScreen.getChildren().addAll(resumeButton);
 
     }
@@ -215,6 +212,8 @@ public class GamePlayScreen extends BorderPane {
 
     public void initializeGamePlayHandlers(AppTemplate app) throws InstantiationException {
         profileButton.setText(gamedata.getUsername());
+        modeTitle.setText(fileController.getModeTitle());
+        levelLabel.setText("Level: " + fileController.getLevel());
         profileButton.setOnAction(e -> {
             try {
                 fileController.handleProfileRequest();
@@ -231,9 +230,10 @@ public class GamePlayScreen extends BorderPane {
                 System.exit(1);
             }
         });
-        playPauseButton.setOnAction(e -> {
+        pauseButton.setOnAction(e -> {
             try {
-                fileController.handlePlayPauseRequest();
+                hideScreen.toFront();
+                fileController.handlePauseRequest();
             } catch (IOException e1) {
                 e1.printStackTrace();
                 System.exit(1);
@@ -249,9 +249,9 @@ public class GamePlayScreen extends BorderPane {
         });
     }
     public void initializePauseHandlers(AppTemplate app) throws InstantiationException {
-        hideScreen.toFront();
         resumeButton.setOnAction(e -> {
             try {
+                hideScreen.toBack();
                 fileController.handleResumeRequest();
             } catch (IOException e1) {
                 e1.printStackTrace();

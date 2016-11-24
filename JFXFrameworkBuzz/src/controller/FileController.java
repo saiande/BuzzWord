@@ -17,7 +17,7 @@ public interface FileController {
 
     void handleStartPlayingRequest() throws IOException;
 
-    void handlePlayPauseRequest() throws IOException;
+    void handlePauseRequest() throws IOException;
 
     void handleXRequest() throws IOException;
 
@@ -30,14 +30,6 @@ public interface FileController {
     void handleThreeRequest() throws IOException;
 
     void handleFourRequest() throws IOException;
-
-    void handleFiveRequest() throws IOException;
-
-    void handleSixRequest() throws IOException;
-
-    void handleSevenRequest() throws IOException;
-
-    void handleEightRequest() throws IOException;
 
     void handleEnterRequest() throws IOException;
 
