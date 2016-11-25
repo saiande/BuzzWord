@@ -118,8 +118,7 @@ public class BuzzWordController implements FileController {
     public void handleOneRequest() throws IOException {
         level = 1;
         app.getGUI().getGameplay().toFront();
-
-        app.getGUI().getGameplay().initializeAnimalsOne();
+        app.getGUI().getGameplay().initializeOne();
         try {
             app.getGUI().getGameplay().initializeGamePlayHandlers(app);
         } catch (InstantiationException e) {
@@ -132,6 +131,7 @@ public class BuzzWordController implements FileController {
     public void handleTwoRequest() throws IOException {
         level = 2;
         app.getGUI().getGameplay().toFront();
+        app.getGUI().getGameplay().initializeTwo();
         try {
             app.getGUI().getGameplay().initializeGamePlayHandlers(app);
         } catch (InstantiationException e) {
@@ -144,6 +144,7 @@ public class BuzzWordController implements FileController {
     public void handleThreeRequest() throws IOException {
         level = 3;
         app.getGUI().getGameplay().toFront();
+        app.getGUI().getGameplay().initializeThree();
         try {
             app.getGUI().getGameplay().initializeGamePlayHandlers(app);
         } catch (InstantiationException e) {
@@ -155,6 +156,7 @@ public class BuzzWordController implements FileController {
     public void handleFourRequest() throws IOException {
         level = 4;
         app.getGUI().getGameplay().toFront();
+        app.getGUI().getGameplay().initializeFour();
         try {
             app.getGUI().getGameplay().initializeGamePlayHandlers(app);
         } catch (InstantiationException e) {
