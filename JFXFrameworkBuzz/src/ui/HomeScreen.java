@@ -44,8 +44,11 @@ public class HomeScreen extends BorderPane {
 
     protected String    modeTitle;          //used in level selection screen
     protected Pane      clearPane;
+    protected Pane      profilePane;
     public String       usernameString;
     public String       passWordString;
+    public int          animalLevel;
+    public int          dictLevel;
 
     //constructor
     public HomeScreen(FileController fileController, GameData gamedata) {
@@ -97,13 +100,17 @@ public class HomeScreen extends BorderPane {
         this.setCenter(imageview);
         //clear pane for login information
         clearPane = new Pane();
-        clearPane.setPrefSize(800, 650);
-        clearPane.setStyle("-fx-background-color: rgba(0, 100, 100, 0.2);");
+
+        profilePane = new Pane();
+
     }
 
     public Pane getClearPane() {
+        System.out.println("im here");
         return clearPane;
     }
+
+    public Pane getProfilePane(){return profilePane;}
 
     public String getUsernameString() {
         return usernameString;
@@ -117,10 +124,15 @@ public class HomeScreen extends BorderPane {
         return modeTitle;
     }
 
+    public int getAnimalLevel() {return animalLevel; }
+
+    public int getDictLevel() {return dictLevel; }
+
     public void initializeHomeHandlers(AppTemplate app) throws InstantiationException {
         this.app = app;
         createProfileButton.setOnAction(e -> {
             try {
+                System.out.println("create pressed");
                 fileController.handleCreateProfileRequest();
             } catch (IOException e1) {
                 e1.printStackTrace();
@@ -129,6 +141,7 @@ public class HomeScreen extends BorderPane {
         });
         loginButton.setOnAction(e -> {
             try {
+                System.out.println("login pressed");
                 fileController.handleLoginRequest();
             } catch (IOException e1) {
                 e1.printStackTrace();
@@ -154,7 +167,8 @@ public class HomeScreen extends BorderPane {
     }
 
     public void profileHandlers(AppTemplate app) throws InstantiationException{
-        clearPane.toFront();
+        profilePane.setPrefSize(800, 650);
+        profilePane.setStyle("-fx-background-color: rgba(0, 100, 100, 0.2);");
         HBox    username = new HBox();
         HBox password = new HBox();
         HBox buttonBox = new HBox();
@@ -180,11 +194,11 @@ public class HomeScreen extends BorderPane {
         password.setPadding(new Insets(10, 10, 10, 10));
         buttonBox.setPadding(new Insets(10,10,10,10));
         box.setPadding(new Insets(50,50,50,50));
-        clearPane.getChildren().addAll(box);
+        profilePane.getChildren().addAll(box);
         box.setTranslateX(300);
         box.setTranslateY(300);
         box.setStyle("-fx-background-color: mediumpurple;");
-
+        profilePane.toFront();
 
         createButton.setOnAction(e -> {
             try {
@@ -194,8 +208,10 @@ public class HomeScreen extends BorderPane {
                 ((GameData)(app.getDataComponent())).setPassword(passWordString);
                 ((GameData)(app.getDataComponent())).setAnimals(1);
                 ((GameData)(app.getDataComponent())).setDict(1);
-                box.setVisible(false);
-                clearPane.toBack();
+                animalLevel = 1;
+                dictLevel = 1;
+                //box.setVisible(false);
+                profilePane.toBack();
                 fileController.handleCreateRequest();
             } catch (IOException e1) {
                 e1.printStackTrace();
@@ -204,8 +220,8 @@ public class HomeScreen extends BorderPane {
         });
         cancelButton.setOnAction(e -> {
             try {
-                box.setVisible(false);
-                clearPane.toBack();
+                //box.setVisible(false);
+                profilePane.toBack();
                 fileController.handleCancelRequest();
             } catch (IOException e1) {
                 e1.printStackTrace();
@@ -215,7 +231,9 @@ public class HomeScreen extends BorderPane {
 }
 
     public void loginHandlers(AppTemplate app) throws InstantiationException {
-        clearPane.toFront();
+        clearPane.setPrefSize(800, 650);
+        clearPane.setStyle("-fx-background-color: rgba(0, 100, 100, 0.2);");
+        System.out.println("homescreen login handlers");
         HBox    username = new HBox();
         HBox    password = new HBox();
         HBox    buttonBox = new HBox();
@@ -239,11 +257,13 @@ public class HomeScreen extends BorderPane {
         password.setPadding(new Insets(10, 10, 10, 10));
         buttonBox.setPadding(new Insets(10,10,10,10));
         box.setPadding(new Insets(50,50,50,50));
+        System.out.println("handled almost done");
         clearPane.getChildren().addAll(box);
         box.setTranslateX(300);
         box.setTranslateY(300);
         box.setStyle("-fx-background-color: mediumpurple;");
-
+        clearPane.toFront();
+        System.out.println("handled done");
 
         enterButton.setOnAction(e -> {
             try {
@@ -251,13 +271,13 @@ public class HomeScreen extends BorderPane {
                 passWordString = enterPassword.getText();
                 ((GameData)(app.getDataComponent())).setUsername(usernameString);
                 ((GameData)(app.getDataComponent())).setPassword(passWordString);
-                box.setVisible(false);
+                //box.setVisible(false);
                 clearPane.toBack();
                 fileController.handleEnterRequest();
-                int easyLevel = 1;
-                int hardLevel = 1;
-                easyLevel = ((GameData)app.getDataComponent()).getAnimals();
-                hardLevel = ((GameData)app.getDataComponent()).getDict();
+                animalLevel = 1;
+                dictLevel = 1;
+                animalLevel = ((GameData)app.getDataComponent()).getAnimals();
+                dictLevel = ((GameData)app.getDataComponent()).getDict();
             } catch (IOException e1) {
                 e1.printStackTrace();
                 System.exit(1);
@@ -276,8 +296,26 @@ public class HomeScreen extends BorderPane {
 
     }
 
-    public void afterLoginProfileHandlers(AppTemplate app) throws InstantiationException {
+    public void toggleLoginButton(AppTemplate app) throws IOException
+    {
+        loginButton.setText("Logout");
+        loginButton.setOnAction(e -> {
+            try {
+                fileController.handleLogoutRequest();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+                System.exit(1);
+            }
+        });
+    }
+    public void toggleProfileButton(AppTemplate app) throws IOException
+    {
+        list.getChildren().remove(createProfileButton);
+        list.getChildren().add(profileButton);
+    }
 
+
+    public void afterLoginProfileHandlers(AppTemplate app) throws InstantiationException {
         secondList = new VBox(50);
         secondList.setTranslateY(-30);
         secondList.setStyle("-fx-background-color: mediumpurple;");

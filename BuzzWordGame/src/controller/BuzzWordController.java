@@ -32,11 +32,13 @@ public class BuzzWordController implements FileController {
 
     @Override
     public void handleHomeRequest() throws IOException {
-
         app.getGUI().getHome().toFront();
         app.getGUI().getHome().initialize();
+
         try {
             app.getGUI().getHome().initializeHomeHandlers(app);
+            app.getGUI().getHome().toggleLoginButton(app);
+            app.getGUI().getHome().toggleProfileButton(app);
         } catch (InstantiationException e) {
             e.printStackTrace();
         }
@@ -45,6 +47,7 @@ public class BuzzWordController implements FileController {
     @Override
     public void handleCreateProfileRequest() throws IOException {
         try {
+            app.getGUI().initializeWindow();
             app.getGUI().getHome().profileHandlers(app);
         } catch (InstantiationException e) {
             e.printStackTrace();
@@ -66,6 +69,7 @@ public class BuzzWordController implements FileController {
     @Override
     public void handleStartPlayingRequest() throws IOException {
         app.getGUI().getLevel().toFront();
+        app.getGUI().getLevel().setLevel(app);
         try {
             app.getGUI().getLevel().initializeLevelHandlers(app);
         } catch (InstantiationException e) {
@@ -98,17 +102,20 @@ public class BuzzWordController implements FileController {
         GameData gamedatatest = (GameData) app.getDataComponent();
 
         workFile = target;
-        AppMessageDialogSingleton dialog = AppMessageDialogSingleton.getSingleton();
-        PropertyManager           props  = PropertyManager.getManager();
-        dialog.show(props.getPropertyValue(SAVE_COMPLETED_TITLE), props.getPropertyValue(SAVE_COMPLETED_MESSAGE));
+//        AppMessageDialogSingleton dialog = AppMessageDialogSingleton.getSingleton();
+//        PropertyManager           props  = PropertyManager.getManager();
+//        dialog.show(props.getPropertyValue(SAVE_COMPLETED_TITLE), props.getPropertyValue(SAVE_COMPLETED_MESSAGE));
 
     }
 
     @Override
     public void handleLoginRequest() throws IOException {
         try {
+            app.getGUI().initializeWindow();
             app.getGUI().getHome().loginHandlers(app);
+            System.out.println("login handle");
         } catch (InstantiationException e) {
+
             e.printStackTrace();
         }
 
@@ -170,12 +177,7 @@ public class BuzzWordController implements FileController {
         PropertyManager propertyManager = PropertyManager.getManager();
         Path        appDirPath  = Paths.get(propertyManager.getPropertyValue(APP_TITLE)).toAbsolutePath();
         read(appDirPath);
-        app.getGUI().getHome().toFront();
-        try {
-            app.getGUI().getHome().afterLoginProfileHandlers(app);
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        }
+
     }
     private void read(Path target) throws IOException {
         app.getFileComponent().loadData(app.getDataComponent(), target);
@@ -208,6 +210,7 @@ public class BuzzWordController implements FileController {
         app.getGUI().getHome().initialize();
         try {
             app.getGUI().getHome().afterLoginProfileHandlers(app);
+            app.getGUI().getHome().toggleLoginButton(app);
         } catch (InstantiationException e) {
             e.printStackTrace();
         }
@@ -216,6 +219,18 @@ public class BuzzWordController implements FileController {
     @Override
     public void handleResumeRequest() throws IOException {
         app.getGUI().getGameplay().toFront();
+    }
+
+    @Override
+    public void handleLogoutRequest() throws IOException {
+        gamedata.reset();
+        app.getGUI().getHome().toFront();
+        app.getGUI().getHome().initialize();
+        try {
+            app.getGUI().getHome().initializeHomeHandlers(app);
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        }
     }
 
 

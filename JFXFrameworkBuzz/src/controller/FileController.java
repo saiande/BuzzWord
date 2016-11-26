@@ -41,6 +41,8 @@ public interface FileController {
 
     void handleResumeRequest() throws IOException;
 
+    void handleLogoutRequest() throws IOException;
+
     String getUsername() throws IOException;
 
     String getModeTitle();

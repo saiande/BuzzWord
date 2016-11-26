@@ -35,7 +35,9 @@ public class AppGUI {
     public      String                  applicationTitle; // the application title
     public      AppTemplate             apptemplate;      // apptemplate instance
     public      Pane                    clearPane;        // login screen
+    public      Pane                    profilePane;      // create profile screen
     public      Pane                    hideScreen;       //Play Pause screen to block game board
+    public      Pane                    hideQuitScreen;    // screen before quitting
     private     int                     appWindowWidth;   // optional parameter for window width that can be set by the application
     private     int                     appWindowHeight;  // optional parameter for window height that can be set by the application
     public GameData                     gamedata;
@@ -121,15 +123,17 @@ public class AppGUI {
         return home;
     }
 
-    private void initializeWindow() throws IOException {
+    public void initializeWindow() throws IOException {
         PropertyManager propertyManager = PropertyManager.getManager();
         // SET THE WINDOW TITLE
         applicationTitle = "!! BUZZWORD !!";
         primaryStage.setTitle(applicationTitle);
         clearPane = home.getClearPane();
         hideScreen = gameplay.getHideScreen();
+        hideQuitScreen = gameplay.getHideQuitScreen();
+        profilePane = home.getProfilePane();
         appPane = new StackPane();
-        appPane.getChildren().addAll(clearPane, home, level, hideScreen, gameplay);
+        appPane.getChildren().addAll(clearPane, profilePane, home, level, hideScreen, hideQuitScreen, gameplay);
         home.toFront();
         primaryScene = appWindowWidth < 1 || appWindowHeight < 1 ? new Scene(appPane)
                 : new Scene(appPane,

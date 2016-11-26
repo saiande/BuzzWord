@@ -59,5 +59,6 @@ public enum AppPropertyType {
     GAME_WON_MESSAGE,
     GAME_LOST_MESSAGE,
     GAME_OVER_TITLE,
-    TRY_AGAIN
+    TRY_AGAIN,
+    QUIT_MESSAGE
 }

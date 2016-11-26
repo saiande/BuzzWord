@@ -81,23 +81,34 @@ public class GameDataManager implements AppFileComponent {
                 jsonParser.nextToken();
                 jsonParser.nextToken();
                 System.out.println(jsonParser.getValueAsString());
-                if (jsonParser.getValueAsString() == password) ;
+                if (jsonParser.getValueAsString().equals(password))
                 {
                     jsonParser.nextToken();
+                    jsonParser.nextToken();
+                    System.out.println(jsonParser.getValueAsInt());
                     gamedata.setAnimals(jsonParser.getValueAsInt());
                     jsonParser.nextToken();
+                    jsonParser.nextToken();
+                    System.out.println(jsonParser.getValueAsInt());
                     gamedata.setDict(jsonParser.getValueAsInt());
+                    gamedata.appTemplate.getGUI().getHome().toFront();
+                    try {
+                        gamedata.appTemplate.getGUI().getHome().afterLoginProfileHandlers(gamedata.appTemplate);
+                    } catch (InstantiationException e) {
+                        e.printStackTrace();
+                    }
                 }
-            }
-            else {
-                AppMessageDialogSingleton dialog = AppMessageDialogSingleton.getSingleton();
-                PropertyManager props = PropertyManager.getManager();
-                dialog.show(props.getPropertyValue(PROPERTIES_LOAD_ERROR_TITLE), props.getPropertyValue(TRY_AGAIN));
-                gamedata.appTemplate.getGUI().getHome().toFront();
-                try {
-                    gamedata.appTemplate.getGUI().getHome().initializeHomeHandlers(gamedata.appTemplate);
-                } catch (InstantiationException e) {
-                    e.printStackTrace();
+                else
+                {
+                    AppMessageDialogSingleton dialog = AppMessageDialogSingleton.getSingleton();
+                    PropertyManager props = PropertyManager.getManager();
+                    dialog.show(props.getPropertyValue(PROPERTIES_LOAD_ERROR_TITLE), props.getPropertyValue(TRY_AGAIN));
+                    gamedata.appTemplate.getGUI().getHome().toFront();
+                    try {
+                        gamedata.appTemplate.getGUI().getHome().initializeHomeHandlers(gamedata.appTemplate);
+                    } catch (InstantiationException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }

@@ -37,6 +37,7 @@ public class LevelSelectionScreen extends BorderPane {
     protected Button three;
     protected Button four;
     protected HBox firstLine;
+    protected Label rules;
 
     protected int level;
 
@@ -95,32 +96,79 @@ public class LevelSelectionScreen extends BorderPane {
         one.setScaleX(2);
         one.setScaleY(2);
         one.setTranslateX(-60);
+
         two = new Button();
         two.setText("2");
         two.setScaleX(2);
         two.setScaleY(2);
         two.setTranslateX(-20);
-        //two.setDisable(true);
+
         three = new Button();
         three.setText("3");
         three.setScaleX(2);
         three.setScaleY(2);
         three.setTranslateX(20);
-        //three.setDisable(true);
+
         four = new Button();
         four.setText("4");
         four.setScaleX(2);
         four.setScaleY(2);
         four.setTranslateX(70);
-        //four.setDisable(true);
+
         firstLine = new HBox();
         firstLine.setPadding(new Insets(50, 50, 50, 50));
         firstLine.getChildren().addAll(one, two, three, four);
         firstLine.setTranslateX(180);
         firstLine.setTranslateY(100);
         this.setCenter(firstLine);
+
+        rules = new Label();
+        rules.setText("Level 1: You may only choose four letter words \n Level 2: You may only choose five letter words \n Level 3: You may only choose six letter words \n Level 4: You may only choose seven letter words");
+        rules.setScaleX(1.5);
+        rules.setScaleY(1.5);
+        rules.setStyle("-fx-background-color: white;");
+        rules.setTranslateX(270);
+        rules.setTranslateY(-150);
+        this.setBottom(rules);
     }
 
+    public void setLevel(AppTemplate app)
+    {
+        int level = 0;
+        if(fileController.getModeTitle()=="Animals")
+            level = gamedata.appTemplate.getGUI().getHome().getAnimalLevel();
+        else
+            level = gamedata.appTemplate.getGUI().getHome().getDictLevel();
+
+        if(level ==1)
+        {
+            one.setDisable(false);
+            two.setDisable(true);
+            three.setDisable(true);
+            four.setDisable(true);
+        }
+        else if(level ==2)
+        {
+            one.setDisable(false);
+            two.setDisable(false);
+            three.setDisable(true);
+            four.setDisable(true);
+        }
+        else if(level == 3)
+        {
+            one.setDisable(false);
+            two.setDisable(false);
+            three.setDisable(false);
+            four.setDisable(true);
+        }
+        else
+        {
+            one.setDisable(false);
+            two.setDisable(false);
+            three.setDisable(false);
+            four.setDisable(false);
+        }
+    }
 
     public void initializeLevelHandlers(AppTemplate app) throws InstantiationException {
         modeTitle.setText(fileController.getModeTitle());

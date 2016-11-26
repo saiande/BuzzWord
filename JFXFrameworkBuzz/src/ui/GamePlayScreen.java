@@ -17,6 +17,7 @@ import javafx.scene.shape.Circle;
 import java.io.IOException;
 import java.util.Random;
 
+import static javafx.scene.paint.Color.BLACK;
 import static javafx.scene.paint.Color.WHITE;
 
 /**
@@ -59,7 +60,10 @@ public class GamePlayScreen extends BorderPane {
     protected GridPane grid;
 
     protected Pane hideScreen;
+    protected Pane hideQuitScreen;
     protected Button resumeButton;
+    protected Button anotherResume;
+    protected Button quitButton;
 
     //constructor
     public GamePlayScreen(FileController fileController, GameData gamedata) {
@@ -192,10 +196,31 @@ public class GamePlayScreen extends BorderPane {
         resumeButton.setTranslateY(300);
         hideScreen.getChildren().addAll(resumeButton);
 
+        hideQuitScreen = new Pane();
+        hideQuitScreen.setStyle("-fx-background-color: mediumpurple;");
+        quitButton = new Button();
+        quitButton.setText("Quit");
+        quitButton.setTranslateX(300);
+        quitButton.setTranslateY(200);
+        Label sure = new Label();
+        sure.setText("Are you sure you wan to quit?");
+        sure.setScaleX(2);
+        sure.setScaleY(2);
+        sure.setTextFill(BLACK);
+        sure.setTranslateX(100);
+        sure.setTranslateY(100);
+        anotherResume = new Button();
+        anotherResume.setText("Resume");
+        anotherResume.setTranslateY(200);
+        anotherResume.setTranslateX(200);
+        hideQuitScreen.getChildren().addAll(sure, quitButton, anotherResume);
+
     }
     public Pane getHideScreen() {
         return hideScreen;
     }
+
+    public Pane getHideQuitScreen() { return hideQuitScreen; }
 
     public void initializeGamePlayHandlers(AppTemplate app) throws InstantiationException {
         profileButton.setText(gamedata.getUsername());
@@ -228,6 +253,25 @@ public class GamePlayScreen extends BorderPane {
         });
         xButton.setOnAction(e -> {
             try {
+                hideQuitScreen.toFront();
+                anotherResume.setOnAction(d -> {
+                    try {
+                        fileController.handleResumeRequest();
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                        System.exit(1);
+                    }
+                });
+                quitButton.setOnAction(d -> {
+                    try {
+                        hideQuitScreen.toBack();
+                        fileController.handleXRequest();
+                        System.exit(1);
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                        System.exit(1);
+                    }
+                });
                 fileController.handleXRequest();
             } catch (IOException e1) {
                 e1.printStackTrace();
@@ -246,108 +290,108 @@ public class GamePlayScreen extends BorderPane {
             }
         });
     }
-    public void initializeOne() {
-        int row, col, colFlag;
-        String word = "";
-        String[] colRowStr = new String[3];
-        Random random = new Random();
-        if(fileController.getModeTitle()=="Animals") {
-            String[] animalsThree = {"ant", "ape", "bat", "bee", "bug", "cat", "cod", "doe", "dog", "eel", "elk", "emu", "fly", "fox", "man", "hen", "hog", "kit", "owl", "pig", "ram", "rat", "sow", "yak"};
-            int index = random.nextInt(animalsThree.length);
-            word = animalsThree[index];
-            System.out.println(word);
-            row = random.nextInt(3);
-            col = random.nextInt(3);
-            colFlag = 0;
-        }
-        else {
-        String[] dictThree = {"act", "bar", "car", "dew", "eat", "far", "gym", "hey", "ink", "jet", "key", "log", "mad", "nap", "odd", "pal", "saw", "tan", "vet", "urn", "wed", "yap", "zoo"};
-            int index = random.nextInt(dictThree.length);
-            word = dictThree[index];
-            System.out.println(word);
-            row = random.nextInt(3);
-            col = random.nextInt(3);
-            colFlag = 0;
-        }
-            Label first = new Label();
-            first.setText(word.substring(0,1));
-            first.setScaleX(2);
-            first.setScaleY(2);
-            first.setTranslateX(33);
-            first.setTextFill(WHITE);
-            grid.add(first, col, row);
-            colRowStr[0] = getColRowString(col, row);
+//    public void initializeOne() {
+//        int row, col, colFlag;
+//        String word = "";
+//        String[] colRowStr = new String[3];
+//        Random random = new Random();
+//        if(fileController.getModeTitle()=="Animals") {
+//            String[] animalsThree = {"ant", "ape", "bat", "bee", "bug", "cat", "cod", "doe", "dog", "eel", "elk", "emu", "fly", "fox", "man", "hen", "hog", "kit", "owl", "pig", "ram", "rat", "sow", "yak"};
+//            int index = random.nextInt(animalsThree.length);
+//            word = animalsThree[index];
+//            System.out.println(word);
+//            row = random.nextInt(3);
+//            col = random.nextInt(3);
+//            colFlag = 0;
+//        }
+//        else {
+//        String[] dictThree = {"act", "bar", "car", "dew", "eat", "far", "gym", "hey", "ink", "jet", "key", "log", "mad", "nap", "odd", "pal", "saw", "tan", "vet", "urn", "wed", "yap", "zoo"};
+//            int index = random.nextInt(dictThree.length);
+//            word = dictThree[index];
+//            System.out.println(word);
+//            row = random.nextInt(3);
+//            col = random.nextInt(3);
+//            colFlag = 0;
+//        }
+//            Label first = new Label();
+//            first.setText(word.substring(0,1));
+//            first.setScaleX(2);
+//            first.setScaleY(2);
+//            first.setTranslateX(33);
+//            first.setTextFill(WHITE);
+//            grid.add(first, col, row);
+//            colRowStr[0] = getColRowString(col, row);
+//
+//            Label second = new Label();
+//            second.setText(word.substring(1, 2));
+//            second.setScaleX(2);
+//            second.setScaleY(2);
+//            second.setTranslateX(33);
+//            second.setTextFill(WHITE);
+//            if(col==3)
+//            {
+//                col = col-1;
+//                colFlag = 1;
+//            }
+//            else
+//            {
+//                col= col+1;
+//            }
+//            grid.add(second, col, row);
+//            colRowStr[1] = getColRowString(col, row);
+//            Label third = new Label();
+//            third.setText(word.substring(2, 3));
+//            third.setScaleX(2);
+//            third.setScaleY(2);
+//            third.setTranslateX(33);
+//            third.setTextFill(WHITE);
+//            if(col==3)
+//            {
+//                row = row-1;
+//                if(row>=0 && row<=3)
+//                {
+//                }
+//                else
+//                {
+//                    row = row+2;
+//                }
+//            }
+//            else
+//            {
+//                if(colFlag==1)
+//                {
+//                    col = col -1;
+//                }
+//                else {
+//                    col = col + 1;
+//                }
+//
+//            }
+//        grid.add(third, col, row);
+//        colRowStr[2] = getColRowString(col, row);
+//
+//        for (int m = 0; m < 4; m++) {
+//            for (int n = 0; n < 4; n++) {
+//                if((m+"xx"+n).equals(colRowStr[0])||(m+"xx"+n).equals(colRowStr[1])||(m+"xx"+n).equals(colRowStr[2]))
+//                    continue;
+//
+//                else {
+//                    Random r = new Random();
+//                    char c = (char) (r.nextInt(26) + 'a');
+//                    Label letter = new Label();
+//                    letter.setText(String.valueOf(c));
+//                    letter.setScaleX(2);
+//                    letter.setScaleY(2);
+//                    letter.setTextFill(WHITE);
+//                    letter.setTranslateX(33);
+//                    grid.add(letter, m, n);
+//                }
+//            }
+//        }
+//
+//        }
 
-            Label second = new Label();
-            second.setText(word.substring(1, 2));
-            second.setScaleX(2);
-            second.setScaleY(2);
-            second.setTranslateX(33);
-            second.setTextFill(WHITE);
-            if(col==3)
-            {
-                col = col-1;
-                colFlag = 1;
-            }
-            else
-            {
-                col= col+1;
-            }
-            grid.add(second, col, row);
-            colRowStr[1] = getColRowString(col, row);
-            Label third = new Label();
-            third.setText(word.substring(2, 3));
-            third.setScaleX(2);
-            third.setScaleY(2);
-            third.setTranslateX(33);
-            third.setTextFill(WHITE);
-            if(col==3)
-            {
-                row = row-1;
-                if(row>=0 && row<=3)
-                {
-                }
-                else
-                {
-                    row = row+2;
-                }
-            }
-            else
-            {
-                if(colFlag==1)
-                {
-                    col = col -1;
-                }
-                else {
-                    col = col + 1;
-                }
-
-            }
-        grid.add(third, col, row);
-        colRowStr[2] = getColRowString(col, row);
-
-        for (int m = 0; m < 4; m++) {
-            for (int n = 0; n < 4; n++) {
-                if((m+"xx"+n).equals(colRowStr[0])||(m+"xx"+n).equals(colRowStr[1])||(m+"xx"+n).equals(colRowStr[2]))
-                    continue;
-
-                else {
-                    Random r = new Random();
-                    char c = (char) (r.nextInt(26) + 'a');
-                    Label letter = new Label();
-                    letter.setText(String.valueOf(c));
-                    letter.setScaleX(2);
-                    letter.setScaleY(2);
-                    letter.setTextFill(WHITE);
-                    letter.setTranslateX(33);
-                    grid.add(letter, m, n);
-                }
-            }
-        }
-
-        }
-
-    public void initializeTwo()
+    public void initializeOne()
     {
         int row, col, colFlag, flag, flagTwo;
         String word = "";
@@ -503,7 +547,7 @@ public class GamePlayScreen extends BorderPane {
         }
 
     }
-    public void initializeThree()
+    public void initializeTwo()
     {
         int row, col, colFlag, flag, flagTwo;
         String word = "";
@@ -699,28 +743,21 @@ public class GamePlayScreen extends BorderPane {
         }
 
     }
-    public void initializeFour()
+    public void initializeThree()
     {
-        int row, col, colFlag, flag, flagTwo;
+        int row, col;
         String word = "";
         String[] colRowStr = new String[6];
         Random random = new Random();
+
         if(fileController.getModeTitle()=="Animals") {
             String[] animalsSix = {"ferret", "rabbit", "coyote", "jaguar", "monkey", "walrus", "beluga", "bobcat", "iguana", "turtle", "python", "hornet", "toucan", "turkey", "parrot", "falcon"};
             int index = random.nextInt(animalsSix.length);
             word = animalsSix[index];
             System.out.println(word);
-//            row = random.nextInt(3);
-//            col = random.nextInt(3);
-            row = 0;
-            col = 0;
-            colFlag = 0;
-            flag = 0;
-            flagTwo =0;
-            if(col==1&&row==0||col==1&&row==1)
-                flag = 1;
-            if(col==2&&row==1||col==2&&row==0||col==2&&row==2)
-                flagTwo =1;
+            row = random.nextInt(3);
+            col = random.nextInt(3);
+
         }
         else {
             String[] dictSix = {"abroad", "answer", "beauty", "bridge", "combat", "credit", "decide", "danger", "editor", "effort", "equity", "famous", "foster", "global", "honest", "intent", "island", "jersey", "latter", "lesson", "manage", "merger", "nobody", "origin", "palace", "pocket", "reform", "robust", "safety", "single", "though", "unique", "valley", "walker", "weekly"};
@@ -729,14 +766,6 @@ public class GamePlayScreen extends BorderPane {
             System.out.println(word);
             row = random.nextInt(3);
             col = random.nextInt(3);
-
-            colFlag = 0;
-            flag =0;
-            flagTwo =0;
-            if(col==1&&row==0||col==1&&row==1)
-                flag = 1;
-            if(col==2&&row==1||col==2&&row==0||col==2&&row==2|)
-                flagTwo =1;
         }
         Label first = new Label();
         first.setText(word.substring(0,1));
@@ -747,178 +776,38 @@ public class GamePlayScreen extends BorderPane {
         grid.add(first, col, row);
         colRowStr[0] = getColRowString(col, row);
 
-        Label second = new Label();
-        second.setText(word.substring(1, 2));
-        second.setScaleX(2);
-        second.setScaleY(2);
-        second.setTranslateX(33);
-        second.setTextFill(WHITE);
-        if(col==3)
-        {
-            col = col-1;
-            colFlag = 1;
-        }
-        else
-        {
-            col= col+1;
-        }
-        grid.add(second, col, row);
-        colRowStr[1] = getColRowString(col, row);
+            for(int i=1; i<6; i++)
+            {
+                Label l = new Label();
+                l.setText(word.substring(i, i+1));
+                l.setScaleX(2);
+                l.setScaleY(2);
+                l.setTranslateX(33);
+                l.setTextFill(WHITE);
 
-        Label third = new Label();
-        third.setText(word.substring(2, 3));
-        third.setScaleX(2);
-        third.setScaleY(2);
-        third.setTranslateX(33);
-        third.setTextFill(WHITE);
-        if(col==3)
-        {
-            row = row-1;
-            if(row>=0 && row<=3)
-            {
-            }
-            else
-            {
-                row = row+2;
-            }
-        }
-        else
-        {
-            if(colFlag==1)
-            {
-                col = col -1;
-            }
-            else {
-                col = col + 1;
-            }
-
-        }
-        grid.add(third, col, row);
-        colRowStr[2] = getColRowString(col, row);
-
-        Label fourth = new Label();
-        fourth.setText(word.substring(3, 4));
-        fourth.setScaleX(2);
-        fourth.setScaleY(2);
-        fourth.setTranslateX(33);
-        fourth.setTextFill(WHITE);
-        if (row == 1 && col == 3 || row == 0 && col == 3)
-        {
-            if(flag ==1)
-                row = row + 1;
-            else if(flag!=1||flagTwo ==1)
-                col = col - 1;
-
-        }
-        else if(col==3)
-        {
-            row = row-1;
-            if(row>=0 && row<=3)
-            {
-            }
-            else
-            {
-                row = row+2;
-            }
-        }
-        else
-        {
-            if(colFlag==1)
-            {
-                col = col -1;
-            }
-            else {
-                col = col + 1;
-            }
-
-        }
-        grid.add(fourth, col, row);
-        colRowStr[3] = getColRowString(col, row);
-
-        Label fifth = new Label();
-        fifth.setText(word.substring(4, 5));
-        fifth.setScaleX(2);
-        fifth.setScaleY(2);
-        fifth.setTranslateX(33);
-        fifth.setTextFill(WHITE);
-        if(flag ==1)
-            row = row+1;
-        else if(row==3&&col==0)
-            row = row -1;
-        else if(col==3)
-        {
-            row = row-1;
-            if(row>=0 && row<=3)
-            {
-            }
-            else
-            {
-                row = row+2;
-            }
-        }
-        else
-        {
-            if(colFlag==1||flagTwo==1)
-            {
-                col = col -1;
-                if(col>=0&&col<=3)
+                if(row < 3 && col < 3)
                 {
+                    col++;
                 }
-                else {
-                    col = col+1;
-                    row = row + 1;
-                }
-            }
-            else {
-                col = col + 1;
-            }
-
-        }
-        grid.add(fifth, col, row);
-        colRowStr[4] = getColRowString(col, row);
-
-
-        Label sixth = new Label();
-        sixth.setText(word.substring(5, 6));
-        sixth.setScaleX(2);
-        sixth.setScaleY(2);
-        sixth.setTranslateX(33);
-        sixth.setTextFill(WHITE);
-        if(flag ==1)
-            row = row+1;
-        else if(row==3&&col==0)
-            row = row -1;
-        else if(col==3)
-        {
-            row = row-1;
-            if(row>=0 && row<=3)
-            {
-            }
-            else
-            {
-                row = row+2;
-            }
-        }
-        else
-        {
-            if(colFlag==1||flagTwo==1)
-            {
-                col = col -1;
-                if(col>=0&&col<=3)
+                else if (row < 3 && col == 3)
                 {
+                    row++;
                 }
-                else {
-                    col = col+1;
-                    row = row + 1;
+                else if (row == 3 && col < 3)
+                {
+                    col--;
+                    if(col < 0) {
+                        col++;
+                        row--;
+                    }
                 }
+                else if(row == 3 && col == 3)
+                {
+                    col--;
+                }
+                grid.add(l, col, row);
+                colRowStr[i] = getColRowString(col, row);
             }
-            else {
-                col = col + 1;
-            }
-
-        }
-        grid.add(sixth, col, row);
-        colRowStr[5] = getColRowString(col, row);
         for (int m = 0; m < 4; m++) {
             for (int n = 0; n < 4; n++) {
                 if((m+"xx"+n).equals(colRowStr[0])||(m+"xx"+n).equals(colRowStr[1])||(m+"xx"+n).equals(colRowStr[2])||(m+"xx"+n).equals(colRowStr[3])||(m+"xx"+n).equals(colRowStr[4])||(m+"xx"+n).equals(colRowStr[5]))
@@ -937,9 +826,87 @@ public class GamePlayScreen extends BorderPane {
                 }
             }
         }
+        }
+
+        public void initializeFour() {
+            {
+                int row, col;
+                String word = "";
+                String[] colRowStr = new String[7];
+                Random random = new Random();
+
+                if (fileController.getModeTitle() == "Animals") {
+                    String[] animalsSeven = {"giraffe", "leopard", "panther", "ostrich", "swallow", "gorilla", "buffalo", "meerkat", "peacock", "catfish", "oarfish", "cheetah", "wallaby", "manatee", "dolphin", "zorilla", "vulture", "buzzard", "sunfish", "penguin", "spaniel", "terrier", "muskrat", "octopus", "terminte", "cricket", "seagull", "sparrow", "ladybug"};
+                    int index = random.nextInt(animalsSeven.length);
+                    word = animalsSeven[index];
+                    System.out.println(word);
+                    row = random.nextInt(3);
+                    col = random.nextInt(3);
+
+                } else {
+                    String[] dictSeven = {"ability", "analyst", "auction", "brother", "between", "chronic", "chapter", "despite", "dynamic", "examine", "edition", "finance", "founder", "generic", "gallery", "highway", "initial", "illegal", "justice", "library", "mineral", "massive", "network", "pacific", "outlook", "privacy", "pioneer", "survive", "unknown", "version"};
+                    int index = random.nextInt(dictSeven.length);
+                    word = dictSeven[index];
+                    System.out.println(word);
+                    row = random.nextInt(3);
+                    col = random.nextInt(3);
+                }
+                Label first = new Label();
+                first.setText(word.substring(0, 1));
+                first.setScaleX(2);
+                first.setScaleY(2);
+                first.setTranslateX(33);
+                first.setTextFill(WHITE);
+                grid.add(first, col, row);
+                colRowStr[0] = getColRowString(col, row);
+
+                for (int i = 1; i < 7; i++) {
+                    Label l = new Label();
+                    l.setText(word.substring(i, i + 1));
+                    l.setScaleX(2);
+                    l.setScaleY(2);
+                    l.setTranslateX(33);
+                    l.setTextFill(WHITE);
+
+                    if (row < 3 && col < 3) {
+                        col++;
+                    } else if (row < 3 && col == 3) {
+                        row++;
+                    } else if (row == 3 && col < 3) {
+                        col--;
+                        if (col < 0) {
+                            col++;
+                            row--;
+                        }
+                    } else if (row == 3 && col == 3) {
+                        col--;
+                    }
+                    grid.add(l, col, row);
+                    colRowStr[i] = getColRowString(col, row);
+                }
+                for (int m = 0; m < 4; m++) {
+                    for (int n = 0; n < 4; n++) {
+                        if ((m + "xx" + n).equals(colRowStr[0]) || (m + "xx" + n).equals(colRowStr[1]) || (m + "xx" + n).equals(colRowStr[2]) || (m + "xx" + n).equals(colRowStr[3]) || (m + "xx" + n).equals(colRowStr[4]) || (m + "xx" + n).equals(colRowStr[5])|| (m + "xx" + n).equals(colRowStr[6]))
+                            continue;
+
+                        else {
+                            Random r = new Random();
+                            char c = (char) (r.nextInt(26) + 'a');
+                            Label letter = new Label();
+                            letter.setText(String.valueOf(c));
+                            letter.setScaleX(2);
+                            letter.setScaleY(2);
+                            letter.setTextFill(WHITE);
+                            letter.setTranslateX(33);
+                            grid.add(letter, m, n);
+                        }
+                    }
+                }
+
+            }
+        }
 
 
-    }
     public String getColRowString(int col, int row)
     {
         return col+"xx"+row;
