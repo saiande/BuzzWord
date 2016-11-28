@@ -229,6 +229,7 @@ public class LevelSelectionScreen extends BorderPane {
         xButton.setOnAction(e -> {
             try {
                 fileController.handleXRequest();
+                System.exit(1);
             } catch (IOException e1) {
                 e1.printStackTrace();
                 System.exit(1);

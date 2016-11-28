@@ -222,6 +222,25 @@ public class GamePlayScreen extends BorderPane {
 
     public Pane getHideQuitScreen() { return hideQuitScreen; }
 
+    public void resetGrid()
+    {
+        grid.getChildren().clear();
+        for (int i = 0; i < 4; i++) {
+            for (int k = 0; k < 4; k++) {
+                Circle c = new Circle(34);
+                grid.add(c, i, k);
+                grid.setMargin(c, new Insets(0, 5, 5, 5));
+            }
+        }
+
+        grid.setMaxSize(150, 150);
+        grid.setTranslateY(-20);
+        grid.setTranslateX(20);
+        this.setCenter(grid);
+
+    }
+
+
     public void initializeGamePlayHandlers(AppTemplate app) throws InstantiationException {
         profileButton.setText(gamedata.getUsername());
         modeTitle.setText(fileController.getModeTitle());
@@ -836,7 +855,7 @@ public class GamePlayScreen extends BorderPane {
                 Random random = new Random();
 
                 if (fileController.getModeTitle() == "Animals") {
-                    String[] animalsSeven = {"giraffe", "leopard", "panther", "ostrich", "swallow", "gorilla", "buffalo", "meerkat", "peacock", "catfish", "oarfish", "cheetah", "wallaby", "manatee", "dolphin", "zorilla", "vulture", "buzzard", "sunfish", "penguin", "spaniel", "terrier", "muskrat", "octopus", "terminte", "cricket", "seagull", "sparrow", "ladybug"};
+                    String[] animalsSeven = {"giraffe", "leopard", "panther", "ostrich", "swallow", "gorilla", "buffalo", "meerkat", "peacock", "catfish", "oarfish", "cheetah", "wallaby", "manatee", "dolphin", "zorilla", "vulture", "buzzard", "sunfish", "penguin", "spaniel", "terrier", "muskrat", "octopus", "termite", "cricket", "seagull", "sparrow", "ladybug"};
                     int index = random.nextInt(animalsSeven.length);
                     word = animalsSeven[index];
                     System.out.println(word);

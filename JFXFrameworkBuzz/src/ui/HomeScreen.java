@@ -40,6 +40,7 @@ public class HomeScreen extends BorderPane {
     protected Button    profileButton;
     protected ComboBox  selectMode;
     protected Button    startPlayingButton;
+    protected Button    keepPlayingButton;
     protected VBox      secondList;
 
     protected String    modeTitle;          //used in level selection screen
@@ -99,6 +100,7 @@ public class HomeScreen extends BorderPane {
         imageview.setTranslateY(-20);
         this.setCenter(imageview);
         //clear pane for login information
+        keepPlayingButton = new Button() ;
         clearPane = new Pane();
 
         profilePane = new Pane();
@@ -159,6 +161,7 @@ public class HomeScreen extends BorderPane {
         xButton.setOnAction(e -> {
             try {
                 fileController.handleXRequest();
+                System.exit(1);
             } catch (IOException e1) {
                 e1.printStackTrace();
                 System.exit(1);
@@ -299,6 +302,15 @@ public class HomeScreen extends BorderPane {
     public void toggleLoginButton(AppTemplate app) throws IOException
     {
         loginButton.setText("Logout");
+        keepPlayingButton.setText("Keep Playing");
+        list.getChildren().add(keepPlayingButton);
+        keepPlayingButton.setOnAction(e -> {
+            try {
+                this.afterLoginProfileHandlers(gamedata.appTemplate);
+            }  catch (InstantiationException e1) {
+                e1.printStackTrace();
+            }
+        });
         loginButton.setOnAction(e -> {
             try {
                 fileController.handleLogoutRequest();
@@ -363,6 +375,7 @@ public class HomeScreen extends BorderPane {
         xButton.setOnAction(e -> {
             try {
                 fileController.handleXRequest();
+                System.exit(1);
             } catch (IOException e1) {
                 e1.printStackTrace();
                 System.exit(1);

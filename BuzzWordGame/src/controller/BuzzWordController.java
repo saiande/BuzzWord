@@ -102,6 +102,7 @@ public class BuzzWordController implements FileController {
         GameData gamedatatest = (GameData) app.getDataComponent();
 
         workFile = target;
+        //System.exit(1);
 //        AppMessageDialogSingleton dialog = AppMessageDialogSingleton.getSingleton();
 //        PropertyManager           props  = PropertyManager.getManager();
 //        dialog.show(props.getPropertyValue(SAVE_COMPLETED_TITLE), props.getPropertyValue(SAVE_COMPLETED_MESSAGE));
@@ -124,6 +125,8 @@ public class BuzzWordController implements FileController {
     @Override
     public void handleOneRequest() throws IOException {
         level = 1;
+        //app.getGUI().getGameplay().initialize();
+        app.getGUI().getGameplay().resetGrid();
         app.getGUI().getGameplay().toFront();
         app.getGUI().getGameplay().initializeOne();
         try {
@@ -137,6 +140,8 @@ public class BuzzWordController implements FileController {
     @Override
     public void handleTwoRequest() throws IOException {
         level = 2;
+        //app.getGUI().getGameplay().initialize();
+        app.getGUI().getGameplay().resetGrid();
         app.getGUI().getGameplay().toFront();
         app.getGUI().getGameplay().initializeTwo();
         try {
@@ -150,6 +155,8 @@ public class BuzzWordController implements FileController {
     @Override
     public void handleThreeRequest() throws IOException {
         level = 3;
+        //app.getGUI().getGameplay().initialize();
+        app.getGUI().getGameplay().resetGrid();
         app.getGUI().getGameplay().toFront();
         app.getGUI().getGameplay().initializeThree();
         try {
@@ -162,6 +169,8 @@ public class BuzzWordController implements FileController {
     @Override
     public void handleFourRequest() throws IOException {
         level = 4;
+        //app.getGUI().getGameplay().initialize();
+        app.getGUI().getGameplay().resetGrid();
         app.getGUI().getGameplay().toFront();
         app.getGUI().getGameplay().initializeFour();
         try {
