@@ -114,7 +114,6 @@ public class BuzzWordController implements FileController {
         try {
             app.getGUI().initializeWindow();
             app.getGUI().getHome().loginHandlers(app);
-            System.out.println("login handle");
         } catch (InstantiationException e) {
 
             e.printStackTrace();
@@ -129,6 +128,7 @@ public class BuzzWordController implements FileController {
         app.getGUI().getGameplay().resetGrid();
         app.getGUI().getGameplay().toFront();
         app.getGUI().getGameplay().initializeOne();
+        app.getGUI().getGameplay().play();
         try {
             app.getGUI().getGameplay().initializeGamePlayHandlers(app);
         } catch (InstantiationException e) {

@@ -108,7 +108,6 @@ public class HomeScreen extends BorderPane {
     }
 
     public Pane getClearPane() {
-        System.out.println("im here");
         return clearPane;
     }
 
@@ -134,7 +133,6 @@ public class HomeScreen extends BorderPane {
         this.app = app;
         createProfileButton.setOnAction(e -> {
             try {
-                System.out.println("create pressed");
                 fileController.handleCreateProfileRequest();
             } catch (IOException e1) {
                 e1.printStackTrace();
@@ -143,7 +141,6 @@ public class HomeScreen extends BorderPane {
         });
         loginButton.setOnAction(e -> {
             try {
-                System.out.println("login pressed");
                 fileController.handleLoginRequest();
             } catch (IOException e1) {
                 e1.printStackTrace();
@@ -184,7 +181,7 @@ public class HomeScreen extends BorderPane {
         Label  passwordLabel = new Label();
         passwordLabel.setText("Password: ");
         TextField enterUsername = new TextField();
-        TextField enterPassword = new TextField();
+        PasswordField enterPassword = new PasswordField();
         Button createButton = new Button();
         createButton.setText("Create");
         Button cancelButton = new Button();
@@ -236,7 +233,6 @@ public class HomeScreen extends BorderPane {
     public void loginHandlers(AppTemplate app) throws InstantiationException {
         clearPane.setPrefSize(800, 650);
         clearPane.setStyle("-fx-background-color: rgba(0, 100, 100, 0.2);");
-        System.out.println("homescreen login handlers");
         HBox    username = new HBox();
         HBox    password = new HBox();
         HBox    buttonBox = new HBox();
@@ -247,7 +243,7 @@ public class HomeScreen extends BorderPane {
         Label  passwordLabel = new Label();
         passwordLabel.setText("Password: ");
         TextField enterUsername = new TextField();
-        TextField enterPassword = new TextField();
+        PasswordField enterPassword = new PasswordField();
         Button enterButton = new Button();
         enterButton.setText("Enter");
         Button cancelButton = new Button();
@@ -260,13 +256,11 @@ public class HomeScreen extends BorderPane {
         password.setPadding(new Insets(10, 10, 10, 10));
         buttonBox.setPadding(new Insets(10,10,10,10));
         box.setPadding(new Insets(50,50,50,50));
-        System.out.println("handled almost done");
         clearPane.getChildren().addAll(box);
         box.setTranslateX(300);
         box.setTranslateY(300);
         box.setStyle("-fx-background-color: mediumpurple;");
         clearPane.toFront();
-        System.out.println("handled done");
 
         enterButton.setOnAction(e -> {
             try {
