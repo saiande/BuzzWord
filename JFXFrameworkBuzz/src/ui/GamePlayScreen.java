@@ -3,24 +3,31 @@ package ui;
 import apptemplate.AppTemplate;
 import controller.FileController;
 import data.GameData;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Tooltip;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Circle;
+import javafx.util.Duration;
+import propertymanager.PropertyManager;
 
 import java.io.IOException;
 import java.util.Random;
 
 import static javafx.scene.paint.Color.BLACK;
 import static javafx.scene.paint.Color.WHITE;
+import static settings.AppPropertyType.GAME_LOST_MESSAGE;
+import static settings.AppPropertyType.GAME_WON_MESSAGE;
 
 /**
  * Created by sai on 11/7/16.
@@ -38,18 +45,21 @@ public class GamePlayScreen extends BorderPane {
     //left
     protected Button profileButton;
     protected Button homeButton;
+    protected Button replayLevel;
+    protected Button nextLevel;
     protected VBox list;
     //bottom
     protected Label levelLabel;
     protected VBox bottomBox;
     protected Button pauseButton;
     //right
-    protected Integer seconds;
+    protected static final Integer seconds = 60;
     protected Label timeRemainingLabel;
     protected Label timerLabel;
     protected HBox timeBox;
+    protected Timeline timeline;
     protected HBox wordGuessing;
-    protected Label bun;
+    protected Label guess;
     protected VBox alreadyGuessedWords;
     protected ListView<String> wordsList;
     protected Label totalLabel;
@@ -66,6 +76,22 @@ public class GamePlayScreen extends BorderPane {
     protected Button resumeButton;
     protected Button anotherResume;
     protected Button quitButton;
+
+    protected Circle[] circleList = new Circle[16];
+    protected String[] labelList = new String[16];
+    protected ObservableList<String> items;
+    protected String highlightWord;
+    protected String word;
+    protected int animals;
+    protected int dict;
+    protected boolean animalsOne;
+    protected boolean animalsTwo;
+    protected boolean animalsThree;
+    protected boolean animalsFour;
+    protected boolean dictOne;
+    protected boolean dictTwo;
+    protected boolean dictThree;
+    protected boolean dictFour;
 
     //constructor
     public GamePlayScreen(FileController fileController, GameData gamedata) {
@@ -105,42 +131,43 @@ public class GamePlayScreen extends BorderPane {
         profileButton = new Button();
         homeButton = new Button();
         homeButton.setText("Home");
+        replayLevel = new Button();
+        replayLevel.setText("Replay Level");
+        nextLevel = new Button();
+        nextLevel.setText("Next Level");
+        nextLevel.setDisable(true);
         list = new VBox(50);
         list.setTranslateY(-30);
         list.setStyle("-fx-background-color: mediumpurple;");
         list.setPadding(new Insets(200, 30, 30, 50));
-        list.getChildren().addAll(profileButton, homeButton);
+        list.getChildren().addAll(profileButton, homeButton, replayLevel, nextLevel);
         this.setLeft(list);
 
         //right
         timeRemainingLabel = new Label();
         timeRemainingLabel.setText("Time Remaining: ");
         timerLabel = new Label();
-        seconds = 60;
         timerLabel.setText(seconds.toString());
         timeBox = new HBox(10);
         timeBox.setPrefSize(150, 40);
         timeBox.setStyle("-fx-background-color: mediumpurple;");
         timeBox.getChildren().addAll(timeRemainingLabel, timerLabel);
 
-        bun = new Label();
-        bun.setText("B  U  ");
+        guess = new Label();
         wordGuessing = new HBox();
         wordGuessing.setPrefSize(150, 60);
-        wordGuessing.getChildren().addAll(bun);
+        wordGuessing.getChildren().addAll(guess);
         wordGuessing.setStyle("-fx-background-color: lightpink;");
 
         alreadyGuessedWords = new VBox();
         alreadyGuessedWords.setPrefSize(150, 250);
         alreadyGuessedWords.setStyle("-fx-background-color: gray;");
         wordsList = new ListView<String>();
-        ObservableList<String> items = FXCollections.observableArrayList(
-                "BUB                     10", "BAT                     10", "SOY                     10");
-        wordsList.setItems(items);
-        wordsList.setPrefSize(150, 250);
+        items = FXCollections.observableArrayList("hi");
+
         alreadyGuessedWords.getChildren().addAll(wordsList);
         totalLabel = new Label();
-        totalLabel.setText("Total:                     30");
+        totalLabel.setText("Total: ");
         total = new HBox();
         total.setStyle("-fx-background-color: dimgray;");
         total.setPrefSize(150, 40);
@@ -176,13 +203,6 @@ public class GamePlayScreen extends BorderPane {
         this.setBottom(bottomBox);
         //middle
         grid = new GridPane();
-        for (int i = 0; i < 4; i++) {
-            for (int k = 0; k < 4; k++) {
-                Circle c = new Circle(34);
-                grid.add(c, i, k);
-                grid.setMargin(c, new Insets(0, 5, 5, 5));
-            }
-        }
 
         grid.setMaxSize(150, 150);
         grid.setTranslateY(-20);
@@ -205,7 +225,7 @@ public class GamePlayScreen extends BorderPane {
         quitButton.setTranslateX(300);
         quitButton.setTranslateY(200);
         Label sure = new Label();
-        sure.setText("Are you sure you wan to quit?");
+        sure.setText("Are you sure you want to quit?");
         sure.setScaleX(2);
         sure.setScaleY(2);
         sure.setTextFill(BLACK);
@@ -226,12 +246,35 @@ public class GamePlayScreen extends BorderPane {
 
     public void resetGrid()
     {
+        pauseButton.setDisable(false);
+        guess.setText("");
+        items.remove(0);
+        totalLabel.setText("Total: ");
         grid.getChildren().clear();
+        highlightWord = "";
         for (int i = 0; i < 4; i++) {
             for (int k = 0; k < 4; k++) {
+                int index = i*4+k;
                 Circle c = new Circle(34);
                 grid.add(c, i, k);
                 grid.setMargin(c, new Insets(0, 5, 5, 5));
+
+                c.setOnDragDetected(event -> {
+                    Circle c3 = (Circle) event.getSource();
+                    c3.startFullDrag();
+
+                });
+                c.setOnMouseDragEntered(event -> {
+                    highlight(c, index);
+                    guess.setText(highlightWord);
+                    circleList[index] = c;
+
+                });
+                c.setOnMouseReleased(event -> {
+                    checkWord();
+                });
+
+
             }
         }
 
@@ -242,6 +285,22 @@ public class GamePlayScreen extends BorderPane {
 
     }
 
+    public void timer()
+    {
+        IntegerProperty timeSeconds = new SimpleIntegerProperty(seconds);
+        timerLabel.textProperty().bind(timeSeconds.asString());
+        if (timeline != null) {
+            timeline.stop();
+        }
+        timeline = new Timeline();
+        timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(seconds), new KeyValue(timeSeconds, 0)));
+        timeline.playFromStart();
+        timeline.setOnFinished(event ->{
+            AppMessageDialogSingleton dialog = AppMessageDialogSingleton.getSingleton();
+            PropertyManager props = PropertyManager.getManager();
+            dialog.show(props.getPropertyValue(GAME_LOST_MESSAGE), props.getPropertyValue(""));
+        });
+    }
 
     public void initializeGamePlayHandlers(AppTemplate app) throws InstantiationException {
         profileButton.setText(gamedata.getUsername());
@@ -267,6 +326,15 @@ public class GamePlayScreen extends BorderPane {
             try {
                 hideScreen.toFront();
                 fileController.handlePauseRequest();
+                timeline.pause();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+                System.exit(1);
+            }
+        });
+        replayLevel.setOnAction(e -> {
+            try {
+                fileController.handleReplayRequest();
             } catch (IOException e1) {
                 e1.printStackTrace();
                 System.exit(1);
@@ -275,9 +343,11 @@ public class GamePlayScreen extends BorderPane {
         xButton.setOnAction(e -> {
             try {
                 hideQuitScreen.toFront();
+                timeline.pause();
                 anotherResume.setOnAction(d -> {
                     try {
                         fileController.handleResumeRequest();
+                        timeline.play();
                     } catch (IOException e1) {
                         e1.printStackTrace();
                         System.exit(1);
@@ -305,6 +375,7 @@ public class GamePlayScreen extends BorderPane {
             try {
                 hideScreen.toBack();
                 fileController.handleResumeRequest();
+                timeline.play();
             } catch (IOException e1) {
                 e1.printStackTrace();
                 System.exit(1);
@@ -314,41 +385,26 @@ public class GamePlayScreen extends BorderPane {
 
     public void initializeOne()
     {
-        int row, col, colFlag, flag, flagTwo;
-        String word = "";
+        nextLevel.setDisable(true);
+        int row, col;
         String[] colRowStr = new String[4];
         Random random = new Random();
+        row = random.nextInt(3);
+        col = random.nextInt(3);
+
         if(fileController.getModeTitle()=="Animals") {
             String[] animalsFour = {"bird", "deer", "bear", "lamb", "crab", "fish", "toad", "frog", "dove", "crow", "gull", "duck", "swan", "kiwi", "wolf", "lynx", "moth", "mole", "worm", "gnat", "goat", "wasp", "calf", "mice", "boar", "pony"};
             int index = random.nextInt(animalsFour.length);
             word = animalsFour[index];
             System.out.println(word);
-            row = random.nextInt(3);
-            col = random.nextInt(3);
-            colFlag = 0;
-            flag =0;
-            flagTwo = 0;
-            if(col==1&&row==0||col==1&&row==1)
-                flag = 1;
-            if(col==2&&row==1)
-                flagTwo =1;
-
+            animalsOne = true;
         }
         else {
             String[] dictFour = {"able", "area", "back", "base", "been", "nest", "blue", "bush", "call", "coal", "cast", "city", "crop", "dead", "dawn", "disk", "draw", "each", "exit", "fact", "feet", "felt", "fire", "fuel", "game", "girl", "grow", "hang", "hear", "holy", "hurt", "jean", "join", "knee", "know", "lady", "life", "logo", "make", "menu", "milk", "mood", "must", "navy", "peck", "only", "nose", "over", "paid", "post", "rear", "rent", "same", "shop", "song", "suit", "task", "they", "view", "ward", "wash", "wine", "year", "zero"};
             int index = random.nextInt(dictFour.length);
             word = dictFour[index];
             System.out.println(word);
-            row = random.nextInt(3);
-            col = random.nextInt(3);
-            colFlag = 0;
-            flag = 0;
-            flagTwo =0;
-            if(col==1&&row==0||col==1&&row==1)
-                flag = 1;
-            if(col==2&&row==1)
-                flagTwo =1;
-
+            dictOne = true;
         }
         Label first = new Label();
         first.setText(word.substring(0,1));
@@ -357,97 +413,44 @@ public class GamePlayScreen extends BorderPane {
         first.setTranslateX(33);
         first.setTextFill(WHITE);
         grid.add(first, col, row);
+        first.setMouseTransparent(true);
+        labelList[col*4+row] = first.getText();
         colRowStr[0] = getColRowString(col, row);
 
-        Label second = new Label();
-        second.setText(word.substring(1, 2));
-        second.setScaleX(2);
-        second.setScaleY(2);
-        second.setTranslateX(33);
-        second.setTextFill(WHITE);
-        if(col==3)
+        for(int i=1; i<4; i++)
         {
-            col = col-1;
-            colFlag = 1;
-        }
-        else
-        {
-            col= col+1;
-        }
-        grid.add(second, col, row);
-        colRowStr[1] = getColRowString(col, row);
+            Label l = new Label();
+            l.setText(word.substring(i, i+1));
+            l.setScaleX(2);
+            l.setScaleY(2);
+            l.setTranslateX(33);
+            l.setTextFill(WHITE);
 
-        Label third = new Label();
-        third.setText(word.substring(2, 3));
-        third.setScaleX(2);
-        third.setScaleY(2);
-        third.setTranslateX(33);
-        third.setTextFill(WHITE);
-        if(col==3)
-        {
-            row = row-1;
-            if(row>=0 && row<=3)
+            if(row < 3 && col < 3)
             {
+                col++;
             }
-            else
+            else if (row < 3 && col == 3)
             {
-                row = row+2;
+                row++;
             }
-        }
-        else
-        {
-            if(colFlag==1)
+            else if (row == 3 && col < 3)
             {
-                col = col -1;
+                col--;
+                if(col < 0) {
+                    col++;
+                    row--;
+                }
             }
-            else {
-                col = col + 1;
-            }
-
-        }
-        grid.add(third, col, row);
-        colRowStr[2] = getColRowString(col, row);
-
-        Label fourth = new Label();
-        fourth.setText(word.substring(3, 4));
-        fourth.setScaleX(2);
-        fourth.setScaleY(2);
-        fourth.setTranslateX(33);
-        fourth.setTextFill(WHITE);
-        if (row == 1 && col == 3 || row == 0 && col == 3)
-        {
-            if(flag ==1)
-                row = row + 1;
-            else if(flag!=1||flagTwo ==1)
-                col = col - 1;
-
-        }
-
-        else if(col==3)
-        {
-            row = row-1;
-            if(row>=0 && row<=3)
+            else if(row == 3 && col == 3)
             {
+                col--;
             }
-            else
-            {
-                row = row+2;
-            }
+            grid.add(l, col, row);
+            l.setMouseTransparent(true);
+            labelList[col*4+row] = l.getText();
+            colRowStr[i] = getColRowString(col, row);
         }
-        else
-        {
-            if(colFlag==1)
-            {
-                col = col -1;
-            }
-            else {
-                col = col + 1;
-            }
-
-        }
-        grid.add(fourth, col, row);
-        colRowStr[3] = getColRowString(col, row);
-
         for (int m = 0; m < 4; m++) {
             for (int n = 0; n < 4; n++) {
                 if((m+"xx"+n).equals(colRowStr[0])||(m+"xx"+n).equals(colRowStr[1])||(m+"xx"+n).equals(colRowStr[2])||(m+"xx"+n).equals(colRowStr[3]))
@@ -463,47 +466,35 @@ public class GamePlayScreen extends BorderPane {
                     letter.setTextFill(WHITE);
                     letter.setTranslateX(33);
                     grid.add(letter, m, n);
+                    letter.setMouseTransparent(true);
+                    labelList[m*4+n] = letter.getText();
                 }
             }
         }
-
     }
+
     public void initializeTwo()
     {
-        int row, col, colFlag, flag, flagTwo;
-        String word = "";
+        nextLevel.setDisable(true);
+        int row, col;
         String[] colRowStr = new String[5];
         Random random = new Random();
+        row = random.nextInt(3);
+        col = random.nextInt(3);
+
         if(fileController.getModeTitle()=="Animals") {
             String[] animalsFive = {"horse", "lemur", "skunk", "otter", "hyena", "tiger", "whale", "bison", "dingo", "finch", "zebra", "shrew", "snake", "mouse", "robin", "panda", "quail", "puppy", "rhino", "goose", "eagle", "dingo", "camel"};
             int index = random.nextInt(animalsFive.length);
             word = animalsFive[index];
             System.out.println(word);
-            row = random.nextInt(3);
-            col = random.nextInt(3);
-            colFlag = 0;
-            flag = 0;
-            flagTwo =0;
-            if(col==1&&row==0||col==1&&row==1)
-                flag = 1;
-            if(col==2&&row==1||col==2&&row==0||col==2&&row==2)
-                flagTwo =1;
+            animalsTwo = true;
         }
         else {
             String[] dictFive = {"about", "agent", "allow", "among", "brand", "brief", "chase", "coach", "doubt", "depth", "earth", "eager", "elite", "enemy", "fight", "false", "guess", "giant", "human", "hairy", "image", "issue", "layer", "lease", "media", "minus", "needs", "often", "ocean", "peace", "phase", "quiet", "radio", "rough", "serve", "shall", "solid", "theme", "title", "touch", "union", "upset", "visit", "voice", "women", "wrote", "young", "world", "would"};
             int index = random.nextInt(dictFive.length);
             word = dictFive[index];
             System.out.println(word);
-            row = random.nextInt(3);
-            col = random.nextInt(3);
-
-            colFlag = 0;
-            flag =0;
-            flagTwo =0;
-            if(col==1&&row==0||col==1&&row==1)
-                flag = 1;
-            if(col==2&&row==1||col==2&&row==0||col==2&&row==2)
-                flagTwo =1;
+            dictTwo = true;
         }
         Label first = new Label();
         first.setText(word.substring(0,1));
@@ -512,138 +503,44 @@ public class GamePlayScreen extends BorderPane {
         first.setTranslateX(33);
         first.setTextFill(WHITE);
         grid.add(first, col, row);
+        first.setMouseTransparent(true);
+        labelList[col*4+row] = first.getText();
         colRowStr[0] = getColRowString(col, row);
 
-        Label second = new Label();
-        second.setText(word.substring(1, 2));
-        second.setScaleX(2);
-        second.setScaleY(2);
-        second.setTranslateX(33);
-        second.setTextFill(WHITE);
-        if(col==3)
+        for(int i=1; i<5; i++)
         {
-            col = col-1;
-            colFlag = 1;
-        }
-        else
-        {
-            col= col+1;
-        }
-        grid.add(second, col, row);
-        colRowStr[1] = getColRowString(col, row);
+            Label l = new Label();
+            l.setText(word.substring(i, i+1));
+            l.setScaleX(2);
+            l.setScaleY(2);
+            l.setTranslateX(33);
+            l.setTextFill(WHITE);
 
-        Label third = new Label();
-        third.setText(word.substring(2, 3));
-        third.setScaleX(2);
-        third.setScaleY(2);
-        third.setTranslateX(33);
-        third.setTextFill(WHITE);
-        if(col==3)
-        {
-            row = row-1;
-            if(row>=0 && row<=3)
+            if(row < 3 && col < 3)
             {
+                col++;
             }
-            else
+            else if (row < 3 && col == 3)
             {
-                row = row+2;
+                row++;
             }
-        }
-        else
-        {
-            if(colFlag==1)
+            else if (row == 3 && col < 3)
             {
-                col = col -1;
-            }
-            else {
-                col = col + 1;
-            }
-
-        }
-        grid.add(third, col, row);
-        colRowStr[2] = getColRowString(col, row);
-
-        Label fourth = new Label();
-        fourth.setText(word.substring(3, 4));
-        fourth.setScaleX(2);
-        fourth.setScaleY(2);
-        fourth.setTranslateX(33);
-        fourth.setTextFill(WHITE);
-        if (row == 1 && col == 3 || row == 0 && col == 3)
-        {
-            if(flag ==1)
-                row = row + 1;
-            else if(flag!=1||flagTwo ==1)
-                col = col - 1;
-
-        }
-        else if(col==3)
-        {
-            row = row-1;
-            if(row>=0 && row<=3)
-            {
-            }
-            else
-            {
-                row = row+2;
-            }
-        }
-        else
-        {
-            if(colFlag==1)
-            {
-                col = col -1;
-            }
-            else {
-                col = col + 1;
-            }
-
-        }
-        grid.add(fourth, col, row);
-        colRowStr[3] = getColRowString(col, row);
-
-        Label fifth = new Label();
-        fifth.setText(word.substring(4, 5));
-        fifth.setScaleX(2);
-        fifth.setScaleY(2);
-        fifth.setTranslateX(33);
-        fifth.setTextFill(WHITE);
-        if(flag ==1)
-            row = row+1;
-        else if(row==3&&col==0)
-            row = row -1;
-        else if(col==3)
-        {
-            row = row-1;
-            if(row>=0 && row<=3)
-            {
-            }
-            else
-            {
-                row = row+2;
-            }
-        }
-        else
-        {
-            if(colFlag==1||flagTwo==1)
-            {
-                col = col -1;
-                if(col>=0&&col<=3)
-                {
-                }
-                else {
-                    col = col+1;
-                    row = row + 1;
+                col--;
+                if(col < 0) {
+                    col++;
+                    row--;
                 }
             }
-            else {
-                col = col + 1;
+            else if(row == 3 && col == 3)
+            {
+                col--;
             }
-
+            grid.add(l, col, row);
+            l.setMouseTransparent(true);
+            labelList[col*4+row] = l.getText();
+            colRowStr[i] = getColRowString(col, row);
         }
-        grid.add(fifth, col, row);
-        colRowStr[4] = getColRowString(col, row);
-
         for (int m = 0; m < 4; m++) {
             for (int n = 0; n < 4; n++) {
                 if((m+"xx"+n).equals(colRowStr[0])||(m+"xx"+n).equals(colRowStr[1])||(m+"xx"+n).equals(colRowStr[2])||(m+"xx"+n).equals(colRowStr[3])||(m+"xx"+n).equals(colRowStr[4]))
@@ -659,34 +556,34 @@ public class GamePlayScreen extends BorderPane {
                     letter.setTextFill(WHITE);
                     letter.setTranslateX(33);
                     grid.add(letter, m, n);
+                    letter.setMouseTransparent(true);
+                    labelList[m*4+n] = letter.getText();
                 }
             }
         }
-
     }
     public void initializeThree()
     {
+        nextLevel.setDisable(true);
         int row, col;
-        String word = "";
         String[] colRowStr = new String[6];
         Random random = new Random();
+        row = random.nextInt(3);
+        col = random.nextInt(3);
 
         if(fileController.getModeTitle()=="Animals") {
             String[] animalsSix = {"ferret", "rabbit", "coyote", "jaguar", "monkey", "walrus", "beluga", "bobcat", "iguana", "turtle", "python", "hornet", "toucan", "turkey", "parrot", "falcon"};
             int index = random.nextInt(animalsSix.length);
             word = animalsSix[index];
             System.out.println(word);
-            row = random.nextInt(3);
-            col = random.nextInt(3);
-
+            animalsThree = true;
         }
         else {
             String[] dictSix = {"abroad", "answer", "beauty", "bridge", "combat", "credit", "decide", "danger", "editor", "effort", "equity", "famous", "foster", "global", "honest", "intent", "island", "jersey", "latter", "lesson", "manage", "merger", "nobody", "origin", "palace", "pocket", "reform", "robust", "safety", "single", "though", "unique", "valley", "walker", "weekly"};
             int index = random.nextInt(dictSix.length);
             word = dictSix[index];
             System.out.println(word);
-            row = random.nextInt(3);
-            col = random.nextInt(3);
+            dictThree = true;
         }
         Label first = new Label();
         first.setText(word.substring(0,1));
@@ -695,6 +592,8 @@ public class GamePlayScreen extends BorderPane {
         first.setTranslateX(33);
         first.setTextFill(WHITE);
         grid.add(first, col, row);
+        first.setMouseTransparent(true);
+        labelList[col*4+row] = first.getText();
         colRowStr[0] = getColRowString(col, row);
 
             for(int i=1; i<6; i++)
@@ -727,6 +626,8 @@ public class GamePlayScreen extends BorderPane {
                     col--;
                 }
                 grid.add(l, col, row);
+                l.setMouseTransparent(true);
+                labelList[col*4+row] = l.getText();
                 colRowStr[i] = getColRowString(col, row);
             }
         for (int m = 0; m < 4; m++) {
@@ -744,6 +645,8 @@ public class GamePlayScreen extends BorderPane {
                     letter.setTextFill(WHITE);
                     letter.setTranslateX(33);
                     grid.add(letter, m, n);
+                    letter.setMouseTransparent(true);
+                    labelList[m*4+n] = letter.getText();
                 }
             }
         }
@@ -751,26 +654,25 @@ public class GamePlayScreen extends BorderPane {
 
         public void initializeFour() {
             {
+                nextLevel.setDisable(true);
                 int row, col;
-                String word = "";
                 String[] colRowStr = new String[7];
                 Random random = new Random();
+                row = random.nextInt(3);
+                col = random.nextInt(3);
 
                 if (fileController.getModeTitle() == "Animals") {
                     String[] animalsSeven = {"giraffe", "leopard", "panther", "ostrich", "swallow", "gorilla", "buffalo", "meerkat", "peacock", "catfish", "oarfish", "cheetah", "wallaby", "manatee", "dolphin", "zorilla", "vulture", "buzzard", "sunfish", "penguin", "spaniel", "terrier", "muskrat", "octopus", "termite", "cricket", "seagull", "sparrow", "ladybug"};
                     int index = random.nextInt(animalsSeven.length);
                     word = animalsSeven[index];
                     System.out.println(word);
-                    row = random.nextInt(3);
-                    col = random.nextInt(3);
-
+                    animalsFour = true;
                 } else {
                     String[] dictSeven = {"ability", "analyst", "auction", "brother", "between", "chronic", "chapter", "despite", "dynamic", "examine", "edition", "finance", "founder", "generic", "gallery", "highway", "initial", "illegal", "justice", "library", "mineral", "massive", "network", "pacific", "outlook", "privacy", "pioneer", "survive", "unknown", "version"};
                     int index = random.nextInt(dictSeven.length);
                     word = dictSeven[index];
                     System.out.println(word);
-                    row = random.nextInt(3);
-                    col = random.nextInt(3);
+                    dictFour = true;
                 }
                 Label first = new Label();
                 first.setText(word.substring(0, 1));
@@ -779,6 +681,8 @@ public class GamePlayScreen extends BorderPane {
                 first.setTranslateX(33);
                 first.setTextFill(WHITE);
                 grid.add(first, col, row);
+                first.setMouseTransparent(true);
+                labelList[col*4+row] = first.getText();
                 colRowStr[0] = getColRowString(col, row);
 
                 for (int i = 1; i < 7; i++) {
@@ -803,6 +707,8 @@ public class GamePlayScreen extends BorderPane {
                         col--;
                     }
                     grid.add(l, col, row);
+                    l.setMouseTransparent(true);
+                    labelList[col*4+row] = l.getText();
                     colRowStr[i] = getColRowString(col, row);
                 }
                 for (int m = 0; m < 4; m++) {
@@ -820,6 +726,8 @@ public class GamePlayScreen extends BorderPane {
                             letter.setTextFill(WHITE);
                             letter.setTranslateX(33);
                             grid.add(letter, m, n);
+                            letter.setMouseTransparent(true);
+                            labelList[m*4+n] = letter.getText();
                         }
                     }
                 }
@@ -833,18 +741,70 @@ public class GamePlayScreen extends BorderPane {
         return col+"xx"+row;
     }
 
-    public void play()
-    {
-        grid.addEventFilter(MouseEvent.ANY, e -> mouseEntered(e));
-        //grid.getChildren().get(1).setStyle("-fx-effect: innershadow(gaussian, #9370db, 4, 4, 0, 0);");
-    }
-    private void mouseEntered(MouseEvent e) {
-        Node source = (Node)e.getSource() ;
-        Integer col = GridPane.getColumnIndex(source);
-        Integer row = GridPane.getRowIndex(source);
-        grid.getChildren().get(col*4+row).setStyle("-fx-effect: innershadow(gaussian, #9370db, 4, 4, 0, 0);");
-        System.out.println(col*4+row);
 
+    public String highlight(Circle c, int index) {
+        c.setStyle("-fx-effect: innershadow(gaussian, #9370db, 4, 4, 0, 0);");
+        highlightWord = highlightWord + labelList[index];
+        return highlightWord;
     }
+
+    public void unhighlight(Circle[] list)
+    {
+        highlightWord = "";
+        for(int i=0; i<list.length; i++) {
+            if(list[i]!= null)
+                list[i].setStyle("-fx-effect: innershadow(gaussian, #9370db, 0, 0, 0, 0);");
+        }
+    }
+    public void checkWord() {
+        if (highlightWord.equals(word)) {
+            items = FXCollections.observableArrayList(highlightWord);
+            wordsList.setItems(items);
+            wordsList.setPrefSize(150, 250);
+            totalLabel.setText("Total:                     10");
+            nextLevel.setDisable(false);
+            AppMessageDialogSingleton dialog = AppMessageDialogSingleton.getSingleton();
+            PropertyManager props = PropertyManager.getManager();
+            dialog.show(props.getPropertyValue(GAME_WON_MESSAGE), props.getPropertyValue(""));
+            timeline.stop();
+
+            if(animalsFour == true)
+                animals = 4;
+            else if (animalsThree == true)
+                animals = 4;
+            else if (animalsTwo == true)
+                animals = 3;
+            else if (animalsOne == true)
+                animals = 2;
+
+            if(dictFour ==true)
+                dict = 4;
+            else if (dictThree == true)
+                dict = 4;
+            else if (dictTwo == true)
+                dict = 3;
+            else if (dictOne == true)
+                dict = 2;
+            gamedata.appTemplate.getGUI().getLevel().setLevel(gamedata.appTemplate);
+            gamedata.setAnimals(animals);
+            gamedata.setDict(dict);
+
+            pauseButton.setDisable(true);
+            nextLevel.setOnAction(e -> {
+                try {
+                    fileController.handleNextRequest();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                    System.exit(1);
+                }
+            });
+
+        } else {
+            System.out.println("not a word");
+            guess.setText(" ");
+            unhighlight(circleList);
+        }
+    }
+
 
 }

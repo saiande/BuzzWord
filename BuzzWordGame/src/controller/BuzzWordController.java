@@ -128,7 +128,7 @@ public class BuzzWordController implements FileController {
         app.getGUI().getGameplay().resetGrid();
         app.getGUI().getGameplay().toFront();
         app.getGUI().getGameplay().initializeOne();
-        app.getGUI().getGameplay().play();
+        app.getGUI().getGameplay().timer();
         try {
             app.getGUI().getGameplay().initializeGamePlayHandlers(app);
         } catch (InstantiationException e) {
@@ -144,6 +144,7 @@ public class BuzzWordController implements FileController {
         app.getGUI().getGameplay().resetGrid();
         app.getGUI().getGameplay().toFront();
         app.getGUI().getGameplay().initializeTwo();
+        app.getGUI().getGameplay().timer();
         try {
             app.getGUI().getGameplay().initializeGamePlayHandlers(app);
         } catch (InstantiationException e) {
@@ -159,6 +160,7 @@ public class BuzzWordController implements FileController {
         app.getGUI().getGameplay().resetGrid();
         app.getGUI().getGameplay().toFront();
         app.getGUI().getGameplay().initializeThree();
+        app.getGUI().getGameplay().timer();
         try {
             app.getGUI().getGameplay().initializeGamePlayHandlers(app);
         } catch (InstantiationException e) {
@@ -173,6 +175,7 @@ public class BuzzWordController implements FileController {
         app.getGUI().getGameplay().resetGrid();
         app.getGUI().getGameplay().toFront();
         app.getGUI().getGameplay().initializeFour();
+        app.getGUI().getGameplay().timer();
         try {
             app.getGUI().getGameplay().initializeGamePlayHandlers(app);
         } catch (InstantiationException e) {
@@ -240,6 +243,30 @@ public class BuzzWordController implements FileController {
         } catch (InstantiationException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void handleReplayRequest() throws IOException {
+        if(level == 1)
+            handleOneRequest();
+        else if (level == 2)
+            handleTwoRequest();
+        else if (level == 3)
+            handleThreeRequest();
+        else
+            handleFourRequest();
+    }
+
+    @Override
+    public void handleNextRequest() throws IOException {
+        if(level == 1)
+            handleTwoRequest();
+        else if (level == 2)
+            handleThreeRequest();
+        else if (level == 3)
+            handleFourRequest();
+        else
+            handleFourRequest();
     }
 
 

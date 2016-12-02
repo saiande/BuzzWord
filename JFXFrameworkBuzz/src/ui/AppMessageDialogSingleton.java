@@ -81,6 +81,6 @@ public class AppMessageDialogSingleton extends Stage {
     public void show(String title, String message) {
         setTitle(title); // set the dialog title
         setMessageLabel(message); // message displayed to the user
-        showAndWait(); // opens the dialog, and waits for the user to resolve using one of the given choices
+        show(); // opens the dialog, and waits for the user to resolve using one of the given choices
     }
 }

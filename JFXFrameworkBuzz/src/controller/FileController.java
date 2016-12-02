@@ -43,6 +43,10 @@ public interface FileController {
 
     void handleLogoutRequest() throws IOException;
 
+    void handleReplayRequest() throws IOException;
+
+    void handleNextRequest() throws IOException;
+
     String getUsername() throws IOException;
 
     String getModeTitle();
