@@ -134,7 +134,7 @@ public class LevelSelectionScreen extends BorderPane {
 
     public void setLevel(AppTemplate app)
     {
-        int level = 0;
+        int level = 1;
         if(fileController.getModeTitle()=="Animals")
             level = gamedata.getAnimals();
         else

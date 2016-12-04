@@ -30,6 +30,7 @@ public class GameDataManager implements AppFileComponent {
     public static final String PASSWORD = "PASSWORD";
     public static final String ANIMALS = "ANIMALS";
     public static final String DICT = "DICT";
+    public Path p;
 
     public String passwordEncode(String password) {
 
@@ -68,7 +69,7 @@ public class GameDataManager implements AppFileComponent {
         JsonFactory jsonFactory = new JsonFactory();
 
         try (OutputStream out = Files.newOutputStream(to)) {
-
+         p = to;
             JsonGenerator generator = jsonFactory.createGenerator(out, JsonEncoding.UTF8);
 
 
@@ -89,6 +90,10 @@ public class GameDataManager implements AppFileComponent {
         }
     }
 
+    public Path getP() {
+        return p;
+    }
+
     @Override
     public void loadData(AppDataComponent data, Path from) throws IOException {
         GameData gamedata = (GameData) data;
@@ -101,7 +106,7 @@ public class GameDataManager implements AppFileComponent {
         File[] files = path.listFiles();
         for (int i = 0; i < files.length; i++) {
             if (files[i].getName().contains(username)) {
-                Path p = Paths.get(files[i].getAbsolutePath());
+                p = Paths.get(files[i].getAbsolutePath());
                 JsonParser jsonParser = jsonFactory.createParser(Files.newInputStream(p));
                 jsonParser.nextToken();
                 jsonParser.nextToken();

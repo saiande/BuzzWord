@@ -16,6 +16,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Circle;
 import javafx.util.Duration;
@@ -28,6 +30,7 @@ import static javafx.scene.paint.Color.BLACK;
 import static javafx.scene.paint.Color.WHITE;
 import static settings.AppPropertyType.GAME_LOST_MESSAGE;
 import static settings.AppPropertyType.GAME_WON_MESSAGE;
+import static settings.AppPropertyType.TRY_AGAIN;
 
 /**
  * Created by sai on 11/7/16.
@@ -79,11 +82,12 @@ public class GamePlayScreen extends BorderPane {
 
     protected Circle[] circleList = new Circle[16];
     protected String[] labelList = new String[16];
+    protected Circle[] allCircleList = new Circle[16];
     protected ObservableList<String> items;
     protected String highlightWord;
     protected String word;
-    protected int animals;
-    protected int dict;
+    protected int animals = 1;
+    protected int dict = 1;
     protected boolean animalsOne;
     protected boolean animalsTwo;
     protected boolean animalsThree;
@@ -273,7 +277,7 @@ public class GamePlayScreen extends BorderPane {
                 c.setOnMouseReleased(event -> {
                     checkWord();
                 });
-
+                allCircleList[index] = c;
 
             }
         }
@@ -471,6 +475,7 @@ public class GamePlayScreen extends BorderPane {
                 }
             }
         }
+        play();
     }
 
     public void initializeTwo()
@@ -561,6 +566,7 @@ public class GamePlayScreen extends BorderPane {
                 }
             }
         }
+        play();
     }
     public void initializeThree()
     {
@@ -650,10 +656,10 @@ public class GamePlayScreen extends BorderPane {
                 }
             }
         }
+        play();
         }
 
         public void initializeFour() {
-            {
                 nextLevel.setDisable(true);
                 int row, col;
                 String[] colRowStr = new String[7];
@@ -731,8 +737,7 @@ public class GamePlayScreen extends BorderPane {
                         }
                     }
                 }
-
-            }
+            play();
         }
 
 
@@ -742,6 +747,31 @@ public class GamePlayScreen extends BorderPane {
     }
 
 
+    public void play()
+    {
+        gamedata.appTemplate.getGUI().getPrimaryScene().setOnKeyTyped((KeyEvent event) -> {
+            char guess = event.getCharacter().charAt(0);
+            if(event.getCode() != KeyCode.ENTER)
+                checkWord();
+            else if (guess < 'a' || guess > 'z')
+            {
+                PropertyManager manager = PropertyManager.getManager();
+                AppMessageDialogSingleton dialog = AppMessageDialogSingleton.getSingleton();
+                dialog.show(manager.getPropertyValue(TRY_AGAIN), "Please press something in A-Z.");
+            }
+            else
+            {
+                for(int i = 0; i< labelList.length; i++)
+                {
+                    String guesss = String.valueOf(guess);
+                    if(guesss.equals(labelList[i]))
+                    {
+                        highlight(allCircleList[i], i);
+                    }
+                }
+            }
+        });
+    }
     public String highlight(Circle c, int index) {
         c.setStyle("-fx-effect: innershadow(gaussian, #9370db, 4, 4, 0, 0);");
         highlightWord = highlightWord + labelList[index];

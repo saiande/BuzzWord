@@ -2,6 +2,7 @@ package controller;
 
 import apptemplate.AppTemplate;
 import data.GameData;
+import data.GameDataManager;
 import propertymanager.PropertyManager;
 import ui.AppMessageDialogSingleton;
 
@@ -92,7 +93,7 @@ public class BuzzWordController implements FileController {
     public void handleXRequest() throws IOException {
         PropertyManager propertyManager = PropertyManager.getManager();
         Path        appDirPath  = Paths.get(propertyManager.getPropertyValue(APP_TITLE)).toAbsolutePath();
-        Path        targetPath  = appDirPath.resolve(APP_WORKDIR_PATH.getParameter());
+        Path        targetPath  = ((GameDataManager)app.getFileComponent()).getP();
             save(targetPath);
 
     }
