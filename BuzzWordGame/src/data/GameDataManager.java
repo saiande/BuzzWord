@@ -30,6 +30,7 @@ public class GameDataManager implements AppFileComponent {
     public static final String PASSWORD = "PASSWORD";
     public static final String ANIMALS = "ANIMALS";
     public static final String DICT = "DICT";
+    public static final String CITIES = "CITIES";
     public Path p;
 
     public String passwordEncode(String password) {
@@ -64,6 +65,7 @@ public class GameDataManager implements AppFileComponent {
         String password  = gamedata.getPassword();
         int animals = gamedata.getAnimals();
         int dict = gamedata.getDict();
+        int cities = gamedata.getCities();
         password = passwordEncode(password);
 
         JsonFactory jsonFactory = new JsonFactory();
@@ -79,6 +81,7 @@ public class GameDataManager implements AppFileComponent {
                 generator.writeStringField(PASSWORD, password);
                 generator.writeNumberField(ANIMALS, animals);
                 generator.writeNumberField(DICT, dict);
+                generator.writeNumberField(CITIES, cities);
 
                 generator.writeEndObject();
 

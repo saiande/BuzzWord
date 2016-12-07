@@ -12,9 +12,18 @@ public class GameData implements AppDataComponent {
 
     private String      username;
     private String      password;
-    private int      animals;
-    public int       dict;
+    private int         animals;
+    public int          dict;
+    public int          cities;
     public AppTemplate appTemplate;
+
+    public int getCities() {
+        return cities;
+    }
+
+    public void setCities(int cities) {
+        this.cities = cities;
+    }
 
     public int getAnimals() {
         return animals;
@@ -59,6 +68,7 @@ public class GameData implements AppDataComponent {
             setPassword(appTemplate.getGUI().getHome().getPassWordString());
             setAnimals(1);
             setDict(1);
+            setCities(1);
         } else {
             this.appTemplate = appTemplate;
         }
@@ -71,6 +81,7 @@ public class GameData implements AppDataComponent {
         this.password = null;
         this.animals = 1;
         this.dict = 1;
+        this.cities = 1;
         appTemplate.getWorkspaceComponent().reloadWorkspace();
     }
 

@@ -137,6 +137,8 @@ public class LevelSelectionScreen extends BorderPane {
         int level = 1;
         if(fileController.getModeTitle()=="Animals")
             level = gamedata.getAnimals();
+        else if (fileController.getModeTitle() == "Cities")
+            level = gamedata.getCities();
         else
             level = gamedata.getDict();
 

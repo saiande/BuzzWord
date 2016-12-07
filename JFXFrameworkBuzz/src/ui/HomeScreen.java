@@ -50,6 +50,7 @@ public class HomeScreen extends BorderPane {
     public String       passWordString;
     public int          animalLevel;
     public int          dictLevel;
+    public int          citiesLevel;
 
     //constructor
     public HomeScreen(FileController fileController, GameData gamedata) {
@@ -128,6 +129,8 @@ public class HomeScreen extends BorderPane {
     public int getAnimalLevel() {return animalLevel; }
 
     public int getDictLevel() {return dictLevel; }
+
+    public int getCitiesLevel() {return citiesLevel; }
 
     public void initializeHomeHandlers(AppTemplate app) throws InstantiationException {
         this.app = app;
@@ -208,8 +211,10 @@ public class HomeScreen extends BorderPane {
                 ((GameData)(app.getDataComponent())).setPassword(passWordString);
                 ((GameData)(app.getDataComponent())).setAnimals(1);
                 ((GameData)(app.getDataComponent())).setDict(1);
+                ((GameData)(app.getDataComponent())).setCities(1);
                 animalLevel = 1;
                 dictLevel = 1;
+                citiesLevel = 1;
                 //box.setVisible(false);
                 profilePane.toBack();
                 fileController.handleCreateRequest();
@@ -273,8 +278,10 @@ public class HomeScreen extends BorderPane {
                 fileController.handleEnterRequest();
                 animalLevel = 1;
                 dictLevel = 1;
+                citiesLevel = 1;
                 animalLevel = ((GameData)app.getDataComponent()).getAnimals();
                 dictLevel = ((GameData)app.getDataComponent()).getDict();
+                citiesLevel = ((GameData)app.getDataComponent()).getCities();
             } catch (IOException e1) {
                 e1.printStackTrace();
                 System.exit(1);
@@ -332,7 +339,7 @@ public class HomeScreen extends BorderPane {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        ObservableList<String> options = FXCollections.observableArrayList("Animals", "Dictionary Words");
+        ObservableList<String> options = FXCollections.observableArrayList("Animals", "Dictionary Words", "Cities");
         selectMode = new ComboBox(options);
         selectMode.setPromptText("Select Mode");
         selectMode.setTranslateX(-30);
