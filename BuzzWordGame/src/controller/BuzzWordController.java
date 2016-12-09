@@ -92,10 +92,14 @@ public class BuzzWordController implements FileController {
 
     @Override
     public void handleXRequest() throws IOException {
-        PropertyManager propertyManager = PropertyManager.getManager();
-        Path        appDirPath  = Paths.get(propertyManager.getPropertyValue(APP_TITLE)).toAbsolutePath();
-        Path        targetPath  = ((GameDataManager)app.getFileComponent()).getP();
+        if(gamedata.getUsername()==null)
+            System.exit(1);
+        else {
+            PropertyManager propertyManager = PropertyManager.getManager();
+            Path appDirPath = Paths.get(propertyManager.getPropertyValue(APP_TITLE)).toAbsolutePath();
+            Path targetPath = ((GameDataManager) app.getFileComponent()).getP();
             save(targetPath);
+        }
 
     }
     private void save(Path target) throws IOException {
@@ -238,6 +242,10 @@ public class BuzzWordController implements FileController {
 
     @Override
     public void handleLogoutRequest() throws IOException {
+        PropertyManager propertyManager = PropertyManager.getManager();
+        Path appDirPath = Paths.get(propertyManager.getPropertyValue(APP_TITLE)).toAbsolutePath();
+        Path targetPath = ((GameDataManager) app.getFileComponent()).getP();
+        save(targetPath);
         gamedata.reset();
         app.getGUI().getHome().toFront();
         app.getGUI().getHome().initialize();

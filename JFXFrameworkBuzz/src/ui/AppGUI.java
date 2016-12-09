@@ -61,6 +61,18 @@ public class AppGUI {
         this(initPrimaryStage, initAppTitle, app, -1, -1);
     }
 
+    public HashSet<String> getAnimals() {
+        return animals;
+    }
+
+    public HashSet<String> getDictionary() {
+        return dictionary;
+    }
+
+    public HashSet<String> getCities() {
+        return cities;
+    }
+
     public AppGUI(Stage primaryStage, String applicationTitle, AppTemplate appTemplate, int appWindowWidth, int appWindowHeight) throws IOException, InstantiationException {
         try {
             Method getFileControllerClassMethod = appTemplate.getClass().getMethod("getFileControllerClass");

@@ -17,6 +17,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Circle;
@@ -107,6 +109,8 @@ public class GamePlayScreen extends BorderPane {
     protected boolean citiThree;
     protected boolean citiFour;
     ArrayList<Circle> wordCircles = new ArrayList<Circle>();
+    public final KeyCombination keyControlR = new KeyCodeCombination(KeyCode.R, KeyCombination.CONTROL_ANY);
+    public final KeyCombination keyControlN = new KeyCodeCombination(KeyCode.N, KeyCombination.CONTROL_ANY);
 
     //constructor
     public GamePlayScreen(FileController fileController, GameData gamedata) {
@@ -332,6 +336,7 @@ public class GamePlayScreen extends BorderPane {
         levelLabel.setText("Level: " + fileController.getLevel());
         profileButton.setOnAction(e -> {
             try {
+                timeline.stop();
                 fileController.handleProfileRequest();
             } catch (IOException e1) {
                 e1.printStackTrace();
@@ -340,6 +345,7 @@ public class GamePlayScreen extends BorderPane {
         });
         homeButton.setOnAction(e -> {
             try {
+                timeline.stop();
                 fileController.handleHomeRequest();
             } catch (IOException e1) {
                 e1.printStackTrace();
@@ -363,6 +369,15 @@ public class GamePlayScreen extends BorderPane {
                 e1.printStackTrace();
                 System.exit(1);
             }
+        });
+        gamedata.appTemplate.getGUI().getPrimaryScene().setOnKeyPressed(e ->
+        {
+            if(keyControlR.match(e))
+                try {
+                    fileController.handleReplayRequest();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
         });
         xButton.setOnAction(e -> {
             try {
@@ -509,6 +524,15 @@ public class GamePlayScreen extends BorderPane {
                 }
             }
         }
+        gamedata.appTemplate.getGUI().getPrimaryScene().setOnKeyPressed(e ->
+        {
+            if(keyControlR.match(e))
+                try {
+                    fileController.handleReplayRequest();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+        });
         check();
         play();
     }
@@ -613,6 +637,15 @@ public class GamePlayScreen extends BorderPane {
                 }
             }
         }
+        gamedata.appTemplate.getGUI().getPrimaryScene().setOnKeyPressed(e ->
+        {
+            if(keyControlR.match(e))
+                try {
+                    fileController.handleReplayRequest();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+        });
         play();
     }
     public void initializeThree()
@@ -715,6 +748,15 @@ public class GamePlayScreen extends BorderPane {
                 }
             }
         }
+        gamedata.appTemplate.getGUI().getPrimaryScene().setOnKeyPressed(e ->
+        {
+            if(keyControlR.match(e))
+                try {
+                    fileController.handleReplayRequest();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+        });
         play();
         }
 
@@ -736,13 +778,13 @@ public class GamePlayScreen extends BorderPane {
                     System.out.println(word);
                     animFour = true;
                 }
-            if (fileController.getModeTitle() == "Cities") {
+                else if (fileController.getModeTitle() == "Cities") {
                 String[] citiesSeven = {"atlanta", "augusta", "boulder", "buffalo", "chicago", "concord", "detroit", "hampton", "houston", "jackson", "lincoln", "madison", "memphis", "newport", "olympia", "oakland", "orlando", "phoenix", "raleigh", "roanoke", "seattle", "trenton", "ventura", "yonkers"};
                 int index = random.nextInt(citiesSeven.length);
                 word = citiesSeven[index];
                 System.out.println(word);
                 citiFour = true;
-            }
+                }
                 else {
                     String[] dictSeven = {"ability", "analyst", "auction", "brother", "between", "chronic", "chapter", "despite", "dynamic", "examine", "edition", "finance", "founder", "generic", "gallery", "highway", "initial", "illegal", "justice", "library", "mineral", "massive", "network", "pacific", "outlook", "privacy", "pioneer", "survive", "unknown", "version"};
                     int index = random.nextInt(dictSeven.length);
@@ -759,7 +801,7 @@ public class GamePlayScreen extends BorderPane {
                 grid.add(first, col, row);
                 first.setMouseTransparent(true);
                 labelList[col*4+row] = first.getText();
-            wordCircles.add(allCircleList[col*4+row]);
+                wordCircles.add(allCircleList[col*4+row]);
                 colRowStr[0] = getColRowString(col, row);
 
                 for (int i = 1; i < 7; i++) {
@@ -786,6 +828,7 @@ public class GamePlayScreen extends BorderPane {
                     grid.add(l, col, row);
                     l.setMouseTransparent(true);
                     labelList[col*4+row] = l.getText();
+                    wordCircles.add(allCircleList[col*4+row]);
                     colRowStr[i] = getColRowString(col, row);
                 }
                 for (int m = 0; m < 4; m++) {
@@ -805,10 +848,19 @@ public class GamePlayScreen extends BorderPane {
                             grid.add(letter, m, n);
                             letter.setMouseTransparent(true);
                             labelList[m*4+n] = letter.getText();
-                            wordCircles.add(allCircleList[col*4+row]);
+
                         }
                     }
                 }
+            gamedata.appTemplate.getGUI().getPrimaryScene().setOnKeyPressed(e ->
+            {
+                if(keyControlR.match(e))
+                    try {
+                        fileController.handleReplayRequest();
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+            });
             play();
         }
 
@@ -833,7 +885,16 @@ public class GamePlayScreen extends BorderPane {
 //                AppMessageDialogSingleton dialog = AppMessageDialogSingleton.getSingleton();
 //                dialog.show(manager.getPropertyValue(TRY_AGAIN), "Please press something in A-Z.");
 //            }
-            if(c >= 'a' || c <= 'z')
+            gamedata.appTemplate.getGUI().getPrimaryScene().setOnKeyPressed(e ->
+            {
+                if(keyControlR.match(e))
+                    try {
+                        fileController.handleReplayRequest();
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+            });
+            if(c >= 'a' && c <= 'z' )
             {
                 ArrayList<Integer> already = new ArrayList<Integer>();
                 String guesss = String.valueOf(c);
@@ -1000,6 +1061,16 @@ public class GamePlayScreen extends BorderPane {
                     System.exit(1);
                 }
             });
+            gamedata.appTemplate.getGUI().getPrimaryScene().setOnKeyPressed(e ->
+            {
+                if(keyControlN.match(e))
+                    try {
+                        fileController.handleNextRequest();
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+            });
+
 
         } else {
             System.out.println("not a word");
@@ -1022,7 +1093,7 @@ public class GamePlayScreen extends BorderPane {
     }
     public boolean checkNext(int i, String w)
     {
-        if(word.equals(w))
+        if(word.equals(w)&& (gamedata.appTemplate.getGUI().getAnimals().contains(word)||gamedata.appTemplate.getGUI().getDictionary().contains(word)||gamedata.appTemplate.getGUI().getCities().contains(word)))
         {
             return true;
         }
