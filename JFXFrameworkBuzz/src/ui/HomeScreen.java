@@ -10,6 +10,9 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -51,11 +54,15 @@ public class HomeScreen extends BorderPane {
     public int          animalLevel;
     public int          dictLevel;
     public int          citiesLevel;
+    public final KeyCombination keyControlP = new KeyCodeCombination(KeyCode.P, KeyCombination.CONTROL_ANY);
+    public final KeyCombination keyControlL = new KeyCodeCombination(KeyCode.L, KeyCombination.CONTROL_ANY);
+    public final KeyCombination keyControlC = new KeyCodeCombination(KeyCode.C, KeyCombination.CONTROL_ANY);
 
     //constructor
-    public HomeScreen(FileController fileController, GameData gamedata) {
+    public HomeScreen(FileController fileController, GameData gamedata, AppTemplate app) {
         this.fileController = fileController;
         this.gamedata = gamedata;
+        this.app = app;
         initialize();
     }
 
@@ -132,8 +139,9 @@ public class HomeScreen extends BorderPane {
 
     public int getCitiesLevel() {return citiesLevel; }
 
-    public void initializeHomeHandlers(AppTemplate app) throws InstantiationException {
-        this.app = app;
+    public void initializeHomeHandlers(AppTemplate apptemplate) throws InstantiationException {
+        this.app = apptemplate;
+
         createProfileButton.setOnAction(e -> {
             try {
                 fileController.handleCreateProfileRequest();
@@ -142,6 +150,16 @@ public class HomeScreen extends BorderPane {
                 System.exit(1);
             }
         });
+//        gamedata.appTemplate.getGUI().getPrimaryScene().setOnKeyPressed(e ->
+//        {
+//            if(keyControlC.match(e))
+//                try {
+//                    fileController.handleCreateProfileRequest();
+//                } catch (IOException e1) {
+//                    e1.printStackTrace();
+//                }
+//        });
+
         loginButton.setOnAction(e -> {
             try {
                 fileController.handleLoginRequest();
@@ -150,6 +168,17 @@ public class HomeScreen extends BorderPane {
                 System.exit(1);
             }
         });
+//        app.getGUI().getPrimaryScene().setOnKeyPressed(e ->
+//        {
+//            if(keyControlL.match(e))
+//                try {
+//                    fileController.handleLoginRequest();
+//                } catch (IOException e1) {
+//                    e1.printStackTrace();
+//                }
+//        });
+
+
         help.setOnAction(e -> {
             try {
                 fileController.handleHelpRequest();
@@ -223,6 +252,7 @@ public class HomeScreen extends BorderPane {
                 System.exit(1);
             }
         });
+
         cancelButton.setOnAction(e -> {
             try {
                 //box.setVisible(false);
@@ -348,6 +378,15 @@ public class HomeScreen extends BorderPane {
         secondList.getChildren().addAll(profileButton, selectMode, startPlayingButton);
         this.setLeft(secondList);
 
+        gamedata.appTemplate.getGUI().getPrimaryScene().setOnKeyPressed(e ->
+        {
+            if(keyControlP.match(e))
+                try {
+                    fileController.handleStartPlayingRequest();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+        });
         profileButton.setOnAction(e -> {
             try {
                 fileController.handleProfileRequest();

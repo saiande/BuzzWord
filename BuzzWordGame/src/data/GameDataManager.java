@@ -6,8 +6,6 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import components.AppDataComponent;
 import components.AppFileComponent;
-import propertymanager.PropertyManager;
-import ui.AppMessageDialogSingleton;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,9 +15,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
-import static settings.AppPropertyType.PROPERTIES_LOAD_ERROR_TITLE;
-import static settings.AppPropertyType.TRY_AGAIN;
 
 /**
  * @author Ritwik Banerjee
@@ -136,9 +131,9 @@ public class GameDataManager implements AppFileComponent {
                 }
                 else
                 {
-                    AppMessageDialogSingleton dialog = AppMessageDialogSingleton.getSingleton();
-                    PropertyManager props = PropertyManager.getManager();
-                    dialog.show(props.getPropertyValue(PROPERTIES_LOAD_ERROR_TITLE), props.getPropertyValue(TRY_AGAIN));
+//                    AppMessageDialogSingleton dialog = AppMessageDialogSingleton.getSingleton();
+//                    PropertyManager props = PropertyManager.getManager();
+//                    dialog.show(props.getPropertyValue(PROPERTIES_LOAD_ERROR_TITLE), props.getPropertyValue(TRY_AGAIN));
                     gamedata.appTemplate.getGUI().getHome().toFront();
                     try {
                         gamedata.appTemplate.getGUI().getHome().initializeHomeHandlers(gamedata.appTemplate);

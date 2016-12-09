@@ -24,13 +24,13 @@ import javafx.util.Duration;
 import propertymanager.PropertyManager;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Random;
 
 import static javafx.scene.paint.Color.BLACK;
 import static javafx.scene.paint.Color.WHITE;
 import static settings.AppPropertyType.GAME_LOST_MESSAGE;
 import static settings.AppPropertyType.GAME_WON_MESSAGE;
-import static settings.AppPropertyType.TRY_AGAIN;
 
 /**
  * Created by sai on 11/7/16.
@@ -56,7 +56,7 @@ public class GamePlayScreen extends BorderPane {
     protected VBox bottomBox;
     protected Button pauseButton;
     //right
-    protected static final Integer seconds = 60;
+    protected static final Integer seconds = 10;
     protected Label timeRemainingLabel;
     protected Label timerLabel;
     protected HBox timeBox;
@@ -80,34 +80,40 @@ public class GamePlayScreen extends BorderPane {
     protected Button anotherResume;
     protected Button quitButton;
 
-    protected Circle[] circleList = new Circle[16];
+    //protected Circle[] circleList = new Circle[16];
+    protected ArrayList<Circle> circleList = new ArrayList<Circle>();
     protected String[] labelList = new String[16];
     protected Circle[] allCircleList = new Circle[16];
     protected ObservableList<String> items;
+
     protected String highlightWord;
+    protected String highlightWord1;
     protected String word;
     protected  int index;
+    protected Circle prev;
     protected int animals = 1;
     protected int dict = 1;
     protected int cities = 1;
-    protected boolean animalsOne;
-    protected boolean animalsTwo;
-    protected boolean animalsThree;
-    protected boolean animalsFour;
+    protected boolean animOne;
+    protected boolean animTwo;
+    protected boolean animThree;
+    protected boolean animFour;
     protected boolean dictOne;
     protected boolean dictTwo;
     protected boolean dictThree;
     protected boolean dictFour;
-    protected boolean citiesOne;
-    protected boolean citiesTwo;
-    protected boolean citiesThree;
-    protected boolean citiesFour;
+    protected boolean citiOne;
+    protected boolean citiTwo;
+    protected boolean citiThree;
+    protected boolean citiFour;
+    ArrayList<Circle> wordCircles = new ArrayList<Circle>();
 
     //constructor
     public GamePlayScreen(FileController fileController, GameData gamedata) {
         this.fileController = fileController;
         this.gamedata = gamedata;
         initialize();
+
     }
 
     public void initialize() {
@@ -256,6 +262,8 @@ public class GamePlayScreen extends BorderPane {
 
     public void resetGrid()
     {
+
+        prev = new Circle();
         pauseButton.setDisable(false);
         guess.setText("");
         items = FXCollections.observableArrayList("hi");
@@ -270,7 +278,6 @@ public class GamePlayScreen extends BorderPane {
                 Circle c = new Circle(34);
                 grid.add(c, i, k);
                 grid.setMargin(c, new Insets(0, 5, 5, 5));
-
                 c.setOnDragDetected(event -> {
                     Circle c3 = (Circle) event.getSource();
                     c3.startFullDrag();
@@ -279,11 +286,13 @@ public class GamePlayScreen extends BorderPane {
                 c.setOnMouseDragEntered(event -> {
                     highlight(c, index);
                     guess.setText(highlightWord);
-                    circleList[index] = c;
+                    //circleList[index] = c;
+                    circleList.add(c);
 
                 });
                 c.setOnMouseReleased(event -> {
-                    checkWord();
+                    //makeLine(circleList);
+                    checkWord(highlightWord);
                 });
                 allCircleList[index] = c;
 
@@ -311,6 +320,9 @@ public class GamePlayScreen extends BorderPane {
             AppMessageDialogSingleton dialog = AppMessageDialogSingleton.getSingleton();
             PropertyManager props = PropertyManager.getManager();
             dialog.show(props.getPropertyValue(GAME_LOST_MESSAGE), "the word was: "+word);
+            grid.setDisable(true);
+            highlightWhole(wordCircles);
+            wordCircles.clear();
         });
     }
 
@@ -397,6 +409,8 @@ public class GamePlayScreen extends BorderPane {
 
     public void initializeOne()
     {
+
+        grid.setDisable(false);
         nextLevel.setDisable(true);
         int row, col;
         String[] colRowStr = new String[4];
@@ -405,11 +419,11 @@ public class GamePlayScreen extends BorderPane {
         col = random.nextInt(3);
 
         if(fileController.getModeTitle()=="Animals") {
-            String[] animalsFour = {"bird", "deer", "bear", "lamb", "crab", "fish", "toad", "frog", "dove", "crow", "gull", "duck", "swan", "kiwi", "wolf", "lynx", "moth", "mole", "worm", "gnat", "goat", "wasp", "calf", "mice", "boar", "pony"};
+            String[] animalsFour = {"bird","deer", "bear", "lamb", "crab", "fish", "toad", "frog", "dove", "crow", "gull", "duck","swan", "kiwi", "wolf", "lynx", "moth", "mole", "worm", "gnat", "goat", "wasp", "calf", "mice", "boar", "pony"};
             int index = random.nextInt(animalsFour.length);
             word = animalsFour[index];
             System.out.println(word);
-            animalsOne = true;
+            animOne = true;
         }
         else if (fileController.getModeTitle() == "Cities")
         {
@@ -417,7 +431,7 @@ public class GamePlayScreen extends BorderPane {
             int index = random.nextInt(citiesFour.length);
             word = citiesFour[index];
             System.out.println(word);
-            citiesOne = true;
+            citiOne = true;
         }
         else {
             String[] dictFour = {"able", "area", "back", "base", "been", "nest", "blue", "bush", "call", "coal", "cast", "city", "crop", "dead", "dawn", "disk", "draw", "each", "exit", "fact", "feet", "felt", "fire", "fuel", "game", "girl", "grow", "hang", "hear", "holy", "hurt", "jean", "join", "knee", "know", "lady", "life", "logo", "make", "menu", "milk", "mood", "must", "navy", "peck", "only", "nose", "over", "paid", "post", "rear", "rent", "same", "shop", "song", "suit", "task", "they", "view", "ward", "wash", "wine", "year", "zero"};
@@ -435,6 +449,8 @@ public class GamePlayScreen extends BorderPane {
         grid.add(first, col, row);
         first.setMouseTransparent(true);
         labelList[col*4+row] = first.getText();
+        wordCircles.add(allCircleList[col*4+row]);
+
         colRowStr[0] = getColRowString(col, row);
 
         for(int i=1; i<4; i++)
@@ -469,6 +485,8 @@ public class GamePlayScreen extends BorderPane {
             grid.add(l, col, row);
             l.setMouseTransparent(true);
             labelList[col*4+row] = l.getText();
+            wordCircles.add(allCircleList[col*4+row]);
+
             colRowStr[i] = getColRowString(col, row);
         }
         for (int m = 0; m < 4; m++) {
@@ -491,11 +509,15 @@ public class GamePlayScreen extends BorderPane {
                 }
             }
         }
+        check();
         play();
     }
 
     public void initializeTwo()
     {
+
+        grid.setDisable(false);
+        pointsNumber.setText("20 Points");
         nextLevel.setDisable(true);
         int row, col;
         String[] colRowStr = new String[5];
@@ -508,14 +530,14 @@ public class GamePlayScreen extends BorderPane {
             int index = random.nextInt(animalsFive.length);
             word = animalsFive[index];
             System.out.println(word);
-            animalsTwo = true;
+            animTwo = true;
         }
         else if(fileController.getModeTitle()=="Cities") {
             String[] citiesFive = {"akron", "baker", "belen", "boise", "butte", "craig", "dover", "fargo", "flint", "havre", "huron", "macon", "malta", "miami", "minot", "nephi", "ogden", "omaha", "ozark", "provo", "salem", "selma", "sitka", "tampa", "tulsa", "tyler", "ukiah", "utica"};
             int index = random.nextInt(citiesFive.length);
             word = citiesFive[index];
             System.out.println(word);
-            citiesTwo = true;
+            citiTwo = true;
         }
         else {
             String[] dictFive = {"about", "agent", "allow", "among", "brand", "brief", "chase", "coach", "doubt", "depth", "earth", "eager", "elite", "enemy", "fight", "false", "guess", "giant", "human", "hairy", "image", "issue", "layer", "lease", "media", "minus", "needs", "often", "ocean", "peace", "phase", "quiet", "radio", "rough", "serve", "shall", "solid", "theme", "title", "touch", "union", "upset", "visit", "voice", "women", "wrote", "young", "world", "would"};
@@ -533,6 +555,7 @@ public class GamePlayScreen extends BorderPane {
         grid.add(first, col, row);
         first.setMouseTransparent(true);
         labelList[col*4+row] = first.getText();
+        wordCircles.add(allCircleList[col*4+row]);
         colRowStr[0] = getColRowString(col, row);
 
         for(int i=1; i<5; i++)
@@ -567,6 +590,7 @@ public class GamePlayScreen extends BorderPane {
             grid.add(l, col, row);
             l.setMouseTransparent(true);
             labelList[col*4+row] = l.getText();
+            wordCircles.add(allCircleList[col*4+row]);
             colRowStr[i] = getColRowString(col, row);
         }
         for (int m = 0; m < 4; m++) {
@@ -593,6 +617,9 @@ public class GamePlayScreen extends BorderPane {
     }
     public void initializeThree()
     {
+
+        grid.setDisable(false);
+        pointsNumber.setText("30 Points");
         nextLevel.setDisable(true);
         int row, col;
         String[] colRowStr = new String[6];
@@ -605,14 +632,14 @@ public class GamePlayScreen extends BorderPane {
             int index = random.nextInt(animalsSix.length);
             word = animalsSix[index];
             System.out.println(word);
-            animalsThree = true;
+            animThree = true;
         }
         else if(fileController.getModeTitle()=="Cities") {
             String[] citiesSix = {"albany", "auburn", "aurora", "austin", "bangor", "biloxi", "boston", "camden", "dallas", "dayton", "denver", "durham", "fresno", "helena", "ithica", "mobile", "monroe", "nassau", "newark", "orange", "oxford", "quincy", "tacoma", "towson", "tuscan", "topeka", "winona", "yakima"};
             int index = random.nextInt(citiesSix.length);
             word = citiesSix[index];
             System.out.println(word);
-            citiesThree = true;
+            citiThree = true;
         }
         else {
             String[] dictSix = {"abroad", "answer", "beauty", "bridge", "combat", "credit", "decide", "danger", "editor", "effort", "equity", "famous", "foster", "global", "honest", "intent", "island", "jersey", "latter", "lesson", "manage", "merger", "nobody", "origin", "palace", "pocket", "reform", "robust", "safety", "single", "though", "unique", "valley", "walker", "weekly"};
@@ -630,6 +657,7 @@ public class GamePlayScreen extends BorderPane {
         grid.add(first, col, row);
         first.setMouseTransparent(true);
         labelList[col*4+row] = first.getText();
+        wordCircles.add(allCircleList[col*4+row]);
         colRowStr[0] = getColRowString(col, row);
 
             for(int i=1; i<6; i++)
@@ -683,6 +711,7 @@ public class GamePlayScreen extends BorderPane {
                     grid.add(letter, m, n);
                     letter.setMouseTransparent(true);
                     labelList[m*4+n] = letter.getText();
+                    wordCircles.add(allCircleList[col*4+row]);
                 }
             }
         }
@@ -690,6 +719,9 @@ public class GamePlayScreen extends BorderPane {
         }
 
         public void initializeFour() {
+
+            grid.setDisable(false);
+            pointsNumber.setText("40 Points");
                 nextLevel.setDisable(true);
                 int row, col;
                 String[] colRowStr = new String[7];
@@ -702,14 +734,14 @@ public class GamePlayScreen extends BorderPane {
                     int index = random.nextInt(animalsSeven.length);
                     word = animalsSeven[index];
                     System.out.println(word);
-                    animalsFour = true;
+                    animFour = true;
                 }
             if (fileController.getModeTitle() == "Cities") {
                 String[] citiesSeven = {"atlanta", "augusta", "boulder", "buffalo", "chicago", "concord", "detroit", "hampton", "houston", "jackson", "lincoln", "madison", "memphis", "newport", "olympia", "oakland", "orlando", "phoenix", "raleigh", "roanoke", "seattle", "trenton", "ventura", "yonkers"};
                 int index = random.nextInt(citiesSeven.length);
                 word = citiesSeven[index];
                 System.out.println(word);
-                citiesFour = true;
+                citiFour = true;
             }
                 else {
                     String[] dictSeven = {"ability", "analyst", "auction", "brother", "between", "chronic", "chapter", "despite", "dynamic", "examine", "edition", "finance", "founder", "generic", "gallery", "highway", "initial", "illegal", "justice", "library", "mineral", "massive", "network", "pacific", "outlook", "privacy", "pioneer", "survive", "unknown", "version"};
@@ -727,6 +759,7 @@ public class GamePlayScreen extends BorderPane {
                 grid.add(first, col, row);
                 first.setMouseTransparent(true);
                 labelList[col*4+row] = first.getText();
+            wordCircles.add(allCircleList[col*4+row]);
                 colRowStr[0] = getColRowString(col, row);
 
                 for (int i = 1; i < 7; i++) {
@@ -772,6 +805,7 @@ public class GamePlayScreen extends BorderPane {
                             grid.add(letter, m, n);
                             letter.setMouseTransparent(true);
                             labelList[m*4+n] = letter.getText();
+                            wordCircles.add(allCircleList[col*4+row]);
                         }
                     }
                 }
@@ -789,87 +823,97 @@ public class GamePlayScreen extends BorderPane {
     {
         gamedata.appTemplate.getGUI().getPrimaryScene().setOnKeyTyped((KeyEvent event) -> {
             char c = event.getCharacter().charAt(0);
-            if(event.getCode() == KeyCode.ENTER)
-                checkWord();
-            else if (c < 'a' || c > 'z')
+            gamedata.appTemplate.getGUI().getPrimaryScene().setOnKeyPressed((KeyEvent event1) -> {
+                if (event1.getCode().equals(KeyCode.ENTER))
+                    checkWord(highlightWord1);
+            });
+//            if (c < 'a' || c > 'z')
+//            {
+//                PropertyManager manager = PropertyManager.getManager();
+//                AppMessageDialogSingleton dialog = AppMessageDialogSingleton.getSingleton();
+//                dialog.show(manager.getPropertyValue(TRY_AGAIN), "Please press something in A-Z.");
+//            }
+            if(c >= 'a' || c <= 'z')
             {
-                PropertyManager manager = PropertyManager.getManager();
-                AppMessageDialogSingleton dialog = AppMessageDialogSingleton.getSingleton();
-                dialog.show(manager.getPropertyValue(TRY_AGAIN), "Please press something in A-Z.");
-            }
-            else
-            {
+                ArrayList<Integer> already = new ArrayList<Integer>();
+                String guesss = String.valueOf(c);
+                guess.setText(guesss);
+                highlightWord1 = guesss;
                 for(int i = 0; i< labelList.length; i++)
                 {
-                    String guesss = String.valueOf(c);
                     if(guesss.equals(labelList[i]))
                     {
                         highlight(allCircleList[i], i);
-                        guess.setText(highlightWord);
-                        playNext(i);
+                        already.add(i);
+                        circleList.add(allCircleList[i]);
+                        ArrayList<String> path = new ArrayList<String>();
+                        path.add(guesss);
                     }
+
                 }
+                playNext(already);
             }
         });
     }
 
-    public void playNext(int ind)
+    public void playNext(ArrayList<Integer> arr)
     {
-        this.index = ind;
+
         gamedata.appTemplate.getGUI().getPrimaryScene().setOnKeyTyped((KeyEvent event) -> {
-            char c = event.getCharacter().charAt(0);
-            if(event.getCode() == KeyCode.ENTER)
-                checkWord();
-            else if (c < 'a' || c > 'z')
-            {
-                PropertyManager manager = PropertyManager.getManager();
-                AppMessageDialogSingleton dialog = AppMessageDialogSingleton.getSingleton();
-                dialog.show(manager.getPropertyValue(TRY_AGAIN), "Please press something in A-Z.");
-            }
-            else
-            {
-                for(int i = 0; i< 4; i++)
-                {
-                    String guesss = String.valueOf(c);
-                    if((index - 1 >= 0 && index - 1 <= 16) && (guesss.equals(labelList[index - 1])))
-                    {
-                        index = index -1;
-                        highlight(allCircleList[index], index);
-                        guess.setText(highlightWord);
-                    }
-                    else if((index + 1 >= 0 && index + 1 <= 16) && (guesss.equals(labelList[index + 1])))
-                    {
-                        index = index + 1;
-                        highlight(allCircleList[index], index);
-                        guess.setText(highlightWord);
-                    }
-                    else if((index - 4 >= 0 && index - 4 <= 16) && (guesss.equals(labelList[index - 4])))
-                    {
-                        index = index - 4;
-                        highlight(allCircleList[index], index);
-                        guess.setText(highlightWord);
-                    }
-                    else if ((index + 4 >= 0 && index + 4 <= 16) && (guesss.equals(labelList[index + 4])))
-                    {
-                        index = index + 4;
-                        highlight(allCircleList[index], index);
-                        guess.setText(highlightWord);
-                    }
+            highlightWord1 = highlightWord1 + event.getCharacter().charAt(0);
+            ArrayList<Integer> already = new ArrayList<Integer>();
+            guess.setText(highlightWord1);
+            for(int i=0; i< arr.size(); i++) {
+                index = arr.get(i);
+                int ind = 0;
+                char c = event.getCharacter().charAt(0);
+                gamedata.appTemplate.getGUI().getPrimaryScene().setOnKeyPressed((KeyEvent event1) -> {
+                    if (event1.getCode().equals(KeyCode.ENTER))
+                        checkWord(highlightWord1);
+                });
+                  if(c >= 'a' || c <= 'z') {
+                        String guesss = String.valueOf(c);
+                        if ((index != 0 && index !=4 && index != 8 && index != 12) && (index - 1 >= 0 && index - 1 <= 15) && (guesss.equals(labelList[index - 1]))) {
+                            ind = index - 1;
+                            highlight(allCircleList[ind], ind);
+                            already.add(ind);
+                            circleList.add(allCircleList[ind]);
+                        }
+                        if ((index != 3 && index != 7 && index != 11 && index != 15) && (index + 1 >= 0 && index + 1 <= 15) && (guesss.equals(labelList[index + 1]))) {
+                            ind = index + 1;
+                            highlight(allCircleList[ind], ind);
+                            already.add(ind);
+                            circleList.add(allCircleList[ind]);
+                        }
+                        if ((index != 0 && index != 1 && index != 2 && index != 3) && (index - 4 >= 0 && index - 4 <= 15) && (guesss.equals(labelList[index - 4]))) {
+                            ind = index - 4;
+                            highlight(allCircleList[ind], ind);
+                            already.add(ind);
+                            circleList.add(allCircleList[ind]);
+                        }
+                        if ((index != 12 && index != 13 && index != 14 && index != 15) && (index + 4 >= 0 && index + 4 <= 15) && (guesss.equals(labelList[index + 4]))) {
+                            ind = index + 4;
+                            highlight(allCircleList[ind], ind);
+                            already.add(ind);
+                            circleList.add(allCircleList[ind]);
+                        }
+                        else
+                            continue;
                 }
             }
+
+            playNext(already);
         });
     }
 
-    public boolean highlightCheck(Circle[] c)
+    public boolean highlightCheck(int ind)
     {
         boolean first = false;
-        for(int i = 0; i< allCircleList.length; i++)
-        {
-            if(allCircleList[i].getStyle() == ("-fx-effect: innershadow(gaussian, #9370db, 4, 4, 0, 0);"))
+
+            if(allCircleList[ind].getStyle() == ("-fx-effect: innershadow(gaussian, #9370db, 4, 4, 0, 0);"))
                 first = true;
             else
                 first = false;
-        }
         return first;
     }
 
@@ -878,35 +922,50 @@ public class GamePlayScreen extends BorderPane {
         highlightWord = highlightWord + labelList[index];
         return highlightWord;
     }
-
-    public void unhighlight(Circle[] list)
+    public void highlightWhole(ArrayList<Circle> circleList)
     {
-        highlightWord = "";
-        for(int i=0; i<list.length; i++) {
-            if(list[i]!= null)
-                list[i].setStyle("-fx-effect: innershadow(gaussian, #9370db, 0, 0, 0, 0);");
+        for(int i =0; i<circleList.size(); i++)
+        {
+            circleList.get(i).setStyle("-fx-effect: innershadow(gaussian, #9370db, 4, 4, 0, 0);");
         }
     }
-    public void checkWord() {
+
+    public void unhighlight(ArrayList<Circle> list)
+    {
+        highlightWord = "";
+        for(int i=0; i<list.size(); i++) {
+            if(list.get(i)!= null)
+                list.get(i).setStyle("-fx-effect: innershadow(gaussian, #9370db, 0, 0, 0, 0);");
+        }
+    }
+    public void checkWord(String highlightWord) {
         if (highlightWord.equals(word)) {
             items = FXCollections.observableArrayList(highlightWord);
             wordsList.setItems(items);
             wordsList.setPrefSize(150, 250);
             alreadyGuessedWords.getChildren().addAll(wordsList);
-            totalLabel.setText("Total:                     10");
+            if(word.length() == 4)
+                totalLabel.setText("Total:                     10");
+            if(word.length() == 5)
+                totalLabel.setText("Total:                     20");
+            if(word.length() == 6)
+                totalLabel.setText("Total:                     30");
+            if(word.length() == 7)
+                totalLabel.setText("Total:                     40");
             nextLevel.setDisable(false);
             AppMessageDialogSingleton dialog = AppMessageDialogSingleton.getSingleton();
             PropertyManager props = PropertyManager.getManager();
             dialog.show(props.getPropertyValue(GAME_WON_MESSAGE), props.getPropertyValue(""));
             timeline.stop();
+            grid.setDisable(true);
 
-            if(animalsFour == true)
+            if(animFour == true)
                 animals = 4;
-            else if (animalsThree == true)
+            else if (animThree == true)
                 animals = 4;
-            else if (animalsTwo == true)
+            else if (animTwo == true)
                 animals = 3;
-            else if (animalsOne == true)
+            else if (animOne == true)
                 animals = 2;
 
             if(dictFour ==true)
@@ -918,13 +977,13 @@ public class GamePlayScreen extends BorderPane {
             else if (dictOne == true)
                 dict = 2;
 
-            if(citiesFour == true)
+            if(citiFour == true)
                 cities = 4;
-            else if (citiesThree == true)
+            else if (citiThree == true)
                 cities = 4;
-            else if (citiesTwo == true)
+            else if (citiTwo == true)
                 cities = 3;
-            else if (citiesOne == true)
+            else if (citiOne == true)
                 cities = 2;
 
             gamedata.appTemplate.getGUI().getLevel().setLevel(gamedata.appTemplate);
@@ -945,9 +1004,47 @@ public class GamePlayScreen extends BorderPane {
         } else {
             System.out.println("not a word");
             guess.setText(" ");
+            highlightWord1 = "";
             unhighlight(circleList);
+            play();
         }
     }
+    public void check() {
+        for (int i = 0; i < labelList.length; i++) {
+            if(word.substring(0,1) == labelList[i])
+            {
+                if(checkNext(i, labelList[i])!= true);
+                resetGrid();
 
+            }
+
+        }
+    }
+    public boolean checkNext(int i, String w)
+    {
+        if(word.equals(w))
+        {
+            return true;
+        }
+        else {
+            for (int k = 0; k < 4; k++) {
+                if ((i != 0 && i !=4 && i != 8 && i != 12) && (i - 1 >= 0 && i - 1 <= 15) &&labelList[i - 1] == word.substring(word.indexOf(w), word.indexOf(w) + 1)) {
+                    w = w + labelList[i - 1];
+                    return checkNext(i - 1, w);
+                } else if ((i != 3 && i != 7 && i != 11 && i != 15) && (i + 1 >= 0 && i + 1 <= 15) &&labelList[i + 1] == word.substring(word.indexOf(w), word.indexOf(w) + 1)) {
+                    w = w + labelList[i + 1];
+                    return checkNext(i + 1, w);
+                } else if (labelList[i + 4] == word.substring(word.indexOf(w), word.indexOf(w) + 4)) {
+                    w = w + labelList[i + 4];
+                    return checkNext(i + 4, w);
+                } else if ((i != 0 && i != 1 && i != 2 && i != 3) && (i - 4 >= 0 && i - 4 <= 15) && labelList[i - 4] == word.substring(word.indexOf(w), word.indexOf(w) - 4)) {
+                    w = w + labelList[i - 4];
+                    return checkNext(i - 4, w);
+                }
+
+            }
+        }
+        return checkNext(i, w);
+    }
 
 }

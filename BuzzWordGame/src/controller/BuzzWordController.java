@@ -57,7 +57,8 @@ public class BuzzWordController implements FileController {
 
     @Override
     public void handleProfileRequest() throws IOException {
-
+        app.getGUI().getProfile().toFront();
+        app.getGUI().getProfile().initialize();
     }
 
     @Override
@@ -207,6 +208,7 @@ public class BuzzWordController implements FileController {
 
     @Override
     public void handleHelpRequest() throws IOException {
+        app.getGUI().getHelp().toFront();
 
     }
 
@@ -219,7 +221,7 @@ public class BuzzWordController implements FileController {
         Path        targetPath  = appDirPath.resolve(username+"_"+APP_WORKDIR_PATH.getParameter());
 
         saved(targetPath);
-
+        app.getGUI().getHome().toFront();
         app.getGUI().getHome().initialize();
         try {
             app.getGUI().getHome().afterLoginProfileHandlers(app);
@@ -268,6 +270,17 @@ public class BuzzWordController implements FileController {
             handleFourRequest();
         else
             handleFourRequest();
+    }
+
+    @Override
+    public void handleHomeHelpRequest() throws IOException {
+        app.getGUI().getHome().toFront();
+        app.getGUI().getHome().initialize();
+        try {
+            app.getGUI().getHome().initializeHomeHandlers(app);
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        }
     }
 
 

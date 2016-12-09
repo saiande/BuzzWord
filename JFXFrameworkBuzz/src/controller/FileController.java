@@ -47,6 +47,8 @@ public interface FileController {
 
     void handleNextRequest() throws IOException;
 
+    void handleHomeHelpRequest() throws IOException;
+
     String getUsername() throws IOException;
 
     String getModeTitle();
